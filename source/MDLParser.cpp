@@ -10,7 +10,7 @@ constexpr int32_t FILE_ID = 'I' + ('D' << 8) + ('S' << 16) + ('T' << 24);
 
 MDL::MDL(const uint8_t* pFileData, const size_t dataSize) : mDataSize(dataSize)
 {
-	if (pFileData == nullptr || dataSize == 0U) return;
+	if (pFileData == nullptr || dataSize == 0) return;
 
 	mpData = static_cast<uint8_t*>(malloc(dataSize));
 	if (mpData == nullptr) return;

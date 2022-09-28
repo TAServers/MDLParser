@@ -1,21 +1,33 @@
 #pragma once
 
 #include "Enums.h"
+#include "Limits.h"
 
 #include <cstdint>
 
 namespace MDLStructs
 {
+	struct ByteVector
+	{
+		uint8_t x, y, z;
+	};
+
+	struct Vector2D
+	{
+		float x, y;
+	};
+
 	struct Vector
 	{
 		float x, y, z;
 	};
 
-	struct Quaternion
+	struct Vector4D
 	{
 		float x, y, z, w;
 	};
 
+	typedef Vector4D Quaternion;
 	typedef Vector RadianEuler;
 
 	struct Matrix3x4
@@ -192,5 +204,54 @@ namespace MDLStructs
 		int32_t contents;
 
 		int32_t unused[8];
+	};
+}
+
+namespace VVDStructs
+{
+	using MDLStructs::ByteVector;
+
+	using MDLStructs::Vector2D;
+	using MDLStructs::Vector;
+	using MDLStructs::Vector4D;
+
+	struct Header
+	{
+		static const int32_t SUPPORTED_VERSION = 4;
+
+		int32_t id;
+		int32_t version;
+		int32_t checksum;
+
+		int32_t numLoDs;
+		int32_t numLoDVertices[MAX_NUM_LODS];
+
+		int32_t numFixups;
+		int32_t fixupTableOffset;
+
+		int32_t vertexDataOffset;
+		int32_t tangentDataOffset;
+	};
+
+	struct Fixup
+	{
+		int32_t lod;
+		int32_t sourceVertexId;
+		int32_t numVertices;
+	};
+
+	struct BoneWeight
+	{
+		float weight[MAX_NUM_BONES_PER_VERT];
+		int8_t bone[MAX_NUM_BONES_PER_VERT];
+		uint8_t numBones;
+	};
+
+	struct Vertex
+	{
+		BoneWeight boneWeights;
+		Vector pos;
+		Vector normal;
+		Vector2D texCoord;
 	};
 }
