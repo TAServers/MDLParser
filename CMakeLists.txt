@@ -8,6 +8,7 @@ add_library(
 	${PROJECT_NAME}
 	"source/MDLParser.cpp"
 	"source/VVDParser.cpp"
+	"source/VTXParser.cpp"
 )
 
 target_include_directories(

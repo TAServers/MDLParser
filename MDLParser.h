@@ -52,12 +52,8 @@ private:
 	bool mIsValid = false;
 
 	size_t mNumVertices = 0U;
-	MDLStructs::Vector*     mpPositions = nullptr;
-	MDLStructs::Vector*     mpNormals   = nullptr;
-	MDLStructs::Vector4D*   mpTangents  = nullptr;
-	MDLStructs::Vector2D*   mpUVs       = nullptr;
-	MDLStructs::Vector*     mpWeights   = nullptr;
-	MDLStructs::ByteVector* mpBones     = nullptr;
+	VVDStructs::Vertex*   mpVertices = nullptr;
+	MDLStructs::Vector4D* mpTangents = nullptr;
 
 public:
 	VVD() {}
@@ -69,15 +65,8 @@ public:
 
 	size_t GetNumVertices() const;
 
-	const MDLStructs::Vector* GetPositions() const;
-
-	const MDLStructs::Vector* GetNormals() const;
+	const VVDStructs::Vertex* GetVertices() const;
 	const MDLStructs::Vector4D* GetTangents() const;
-
-	const MDLStructs::Vector2D* GetUVs() const;
-
-	const MDLStructs::Vector* GetWeights() const;
-	const MDLStructs::ByteVector* GetBoneIDs() const;
 };
 
 class VTX

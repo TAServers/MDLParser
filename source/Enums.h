@@ -28,3 +28,14 @@ namespace MDLEnums
 		VERT_ANIM_FIXED_POINT_SCALE    = 0x00200000
 	};
 }
+
+namespace VTXEnums
+{
+	enum class Flags : uint8_t
+	{
+		IS_FLEXED = 0x01,
+		IS_HWSKINNED = 0x02,
+		IS_DELTA_FLEXED = 0x04,
+		SUPPRESS_HW_MORPH = 0x08
+	};
+}

@@ -40,6 +40,8 @@ namespace MDLStructs
 
 	struct Header
 	{
+		static const int32_t SUPPORTED_VERSION = 48;
+
 		int32_t id; // Model format ID (IDST)
 		int32_t version;
 		int32_t checksum;
@@ -253,5 +255,99 @@ namespace VVDStructs
 		Vector pos;
 		Vector normal;
 		Vector2D texCoord;
+	};
+}
+
+namespace VTXStructs
+{
+	struct Header
+	{
+		static const int32_t SUPPORTED_VERSION = 7;
+
+		int32_t version;
+
+		int32_t vertCacheSize;
+		uint16_t maxBonesPerStrip;
+		uint16_t maxBonesPerTri;
+		int32_t maxBonesPerVert;
+
+		int32_t checksum;
+
+		int32_t numLoDs;
+
+		int32_t materialReplacementListOffset;
+
+		int32_t numBodyParts;
+		int32_t bodyPartOffset;
+	};
+
+	struct BodyPartHeader
+	{
+		int32_t numModels;
+		int32_t modelOffset;
+	};
+
+	struct ModelHeader
+	{
+		int32_t numLoDs;
+		int32_t lodOffset;
+	};
+
+	struct ModelLoDHeader
+	{
+		int32_t numMeshes;
+		int32_t meshOffset;
+
+		float switchPoint;
+	};
+
+	struct MeshHeader
+	{
+		int32_t numStripGroups;
+		int32_t stripGroupHeaderOffset;
+
+		uint8_t flags;
+	};
+
+	struct StripGroupHeader
+	{
+		int32_t numVerts;
+		int32_t vertOffset;
+
+		int32_t numIndices;
+		int32_t indexOffset;
+
+		int32_t numStrips;
+		int32_t stripOffset;
+
+		uint8_t flags;
+		
+		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
+	};
+
+	struct StripHeader
+	{
+		int32_t numIndices;
+		int32_t indexOffset;
+
+		int32_t numVerts;
+		int32_t vertOffset;
+
+		int16_t numBones;
+
+		uint8_t flags;
+
+		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
+	};
+
+	// would otherwise be padded to 10 bytes
+	struct __attribute__((packed)) Vertex
+	{
+		uint8_t boneWeightIndex[3];
+		uint8_t numBones;
+
+		uint16_t origMeshVertId;
+
+		int8_t boneId[3];
 	};
 }
