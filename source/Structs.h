@@ -5,6 +5,12 @@
 
 #include <cstdint>
 
+#define STRUCT_GETTER(classname, offset)                                                            \
+inline const classname* Get##classname(const int i) const                                           \
+{                                                                                                   \
+	return reinterpret_cast<const classname*>(reinterpret_cast<const uint8_t*>(this) + offset) + i; \
+}
+
 namespace MDLStructs
 {
 	struct ByteVector
@@ -38,6 +44,125 @@ namespace MDLStructs
 		const float* operator[](int i) const { return m[i]; }
 	};
 
+	struct Bone
+	{
+		int32_t szNameIndex; // ??
+		int32_t parent;
+		int32_t boneControllers[6];
+
+		Vector pos;
+		Quaternion quat;
+		RadianEuler rot;
+
+		Vector posScale;
+		Vector rotScale;
+
+		Matrix3x4 poseToBone;
+		Quaternion qAlignment;
+
+		int32_t flags;
+
+		int32_t procType;
+		int32_t procIndex;
+
+		int32_t physicsBoneIndex;
+		int32_t surfacePropIndex;
+
+		int32_t contents;
+
+		int32_t unused[8];
+	};
+
+	struct Flex
+	{
+		int32_t flexDesc;
+
+		float target0;
+		float target1;
+		float target2;
+		float target3;
+
+		int32_t vertsCount;
+		int32_t vertsOffset;
+
+		//STRUCT_GETTER(VertAnim, vertsOffset)
+		//STRUCT_GETTER(VertAnimWrinkle, vertsOffset)
+
+		int32_t flexPair;
+		MDLEnums::VertAnimType vertAnimType;
+
+		uint8_t unused0[3];
+		int32_t unused1[6];
+	};
+
+	struct Mesh
+	{
+		int32_t material;
+
+		int32_t modelIndex;
+
+		int32_t vertsCount;
+		int32_t vertsOffset;
+
+		int32_t flexesCount;
+		int32_t flexesOffset;
+		STRUCT_GETTER(Flex, flexesOffset)
+
+		int32_t materialType;
+		int32_t materialParam;
+
+		int32_t meshId;
+
+		Vector centre;
+
+		// Unused, in the sdk they stored 32 bit ptrs into the VVD
+		int32_t pVertexData;
+		int32_t pTangentData;
+
+		int unused[8];
+	};
+
+	struct Model
+	{
+		char name[64];
+
+		int32_t type;
+
+		float boundingRadius;
+
+		int32_t meshesCount;
+		int32_t meshesOffset;
+		STRUCT_GETTER(Mesh, meshesOffset)
+
+		int32_t vertsCount;
+		int32_t vertsOffset;
+		int32_t tangentsOffset;
+
+		int32_t attachmentsCount;
+		int32_t attachmentsOffset;
+
+		int32_t eyeballsCount;
+		int32_t eyeballsOffset;
+		//STRUCT_GETTER(Eyeball, eyeballsOffset)
+
+		// Unused, in the sdk they stored 32 bit ptrs into the VVD
+		int32_t pVertexData;
+		int32_t pTangentData;
+
+		int32_t unused[8];
+	};
+
+	struct BodyPart
+	{
+		int32_t szNameIndex; // ??
+
+		int32_t modelsCount;
+		int32_t base;
+		int32_t modelsOffset;
+
+		STRUCT_GETTER(Model, modelsOffset)
+	};
+
 	struct Header
 	{
 		static const int32_t SUPPORTED_VERSION = 48;
@@ -45,7 +170,7 @@ namespace MDLStructs
 		int32_t id; // Model format ID (IDST)
 		int32_t version;
 		int32_t checksum;
-		uint8_t name[64];
+		char name[64];
 		int32_t dataLength; // Size of the file
 
 		Vector eyePosition;
@@ -60,6 +185,7 @@ namespace MDLStructs
 
 		int32_t boneCount;
 		int32_t boneOffset;
+		STRUCT_GETTER(Bone, boneOffset)
 
 		int32_t boneControllerCount;
 		int32_t boneControllerOffset;
@@ -177,35 +303,6 @@ namespace MDLStructs
 		int32_t boneFlexDriverOffset;
 
 		int32_t reserved[56];
-	};
-
-	struct Bone
-	{
-		int32_t szNameIndex; // ??
-		int32_t parent;
-		int32_t boneControllers[6];
-
-		Vector pos;
-		Quaternion quat;
-		RadianEuler rot;
-
-		Vector posScale;
-		Vector rotScale;
-
-		Matrix3x4 poseToBone;
-		Quaternion qAlignment;
-
-		int32_t flags;
-
-		int32_t procType;
-		int32_t procIndex;
-
-		int32_t physicsBoneIndex;
-		int32_t surfacePropIndex;
-
-		int32_t contents;
-
-		int32_t unused[8];
 	};
 }
 
@@ -351,3 +448,5 @@ namespace VTXStructs
 		int8_t boneId[3];
 	};
 }
+
+#undef STRUCT_GETTER

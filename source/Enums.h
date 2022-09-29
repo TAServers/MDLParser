@@ -27,6 +27,11 @@ namespace MDLEnums
 		CAST_TEXTURE_SHADOWS           = 0x00040000,
 		VERT_ANIM_FIXED_POINT_SCALE    = 0x00200000
 	};
+
+	enum class VertAnimType : uint8_t
+	{
+
+	};
 }
 
 namespace VTXEnums
