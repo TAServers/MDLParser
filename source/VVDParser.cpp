@@ -20,14 +20,14 @@ VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 	) return;
 
 	mNumVertices = header->numLoDVertices[rootLod];
-	if (sizeof(Header) + sizeof(Fixup) * header->numFixups + (sizeof(Vector4D) + sizeof(Vertex)) * numVertices > dataSize) return;
+	if (sizeof(Header) + sizeof(Fixup) * header->numFixups + (sizeof(Vector4D) + sizeof(Vertex)) * mNumVertices > dataSize) return;
 
-	mpPositions = malloc(sizeof(Vector)     * numVertices);
-	mpNormals   = malloc(sizeof(Vector)     * numVertices);
-	mpTangents  = malloc(sizeof(Vector4D)   * numVertices);
-	mpUVs       = malloc(sizeof(Vector2D)   * numVertices);
-	mpWeights   = malloc(sizeof(Vector)     * numVertices);
-	mpBones     = malloc(sizeof(ByteVector) * numVertices);
+	mpPositions = reinterpret_cast<Vector*    >(malloc(sizeof(Vector)     * mNumVertices));
+	mpNormals   = reinterpret_cast<Vector*    >(malloc(sizeof(Vector)     * mNumVertices));
+	mpTangents  = reinterpret_cast<Vector4D*  >(malloc(sizeof(Vector4D)   * mNumVertices));
+	mpUVs       = reinterpret_cast<Vector2D*  >(malloc(sizeof(Vector2D)   * mNumVertices));
+	mpWeights   = reinterpret_cast<Vector*    >(malloc(sizeof(Vector)     * mNumVertices));
+	mpBones     = reinterpret_cast<ByteVector*>(malloc(sizeof(ByteVector) * mNumVertices));
 
 	if (
 		mpPositions == nullptr ||
@@ -41,7 +41,7 @@ VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 	const Vertex* vertices = reinterpret_cast<const Vertex*>(pFileData + header->vertexDataOffset);
 
 	if (header->numFixups == 0) {
-		memcpy(mpTangents, pFileData + header->tangentDataOffset, sizeof(Vector4D) * numVertices);
+		memcpy(mpTangents, pFileData + header->tangentDataOffset, sizeof(Vector4D) * mNumVertices);
 
 		for (int vertIdx = 0; vertIdx < mNumVertices; vertIdx++) {
 			mpPositions[vertIdx] = vertices[vertIdx].pos;
@@ -55,8 +55,8 @@ VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 			};
 			mpBones[vertIdx] = {
 				vertices[vertIdx].boneWeights.bone[0],
-				vertices[vertIdx].boneWeights.numBones > 1 ? vertices[vertIdx].boneWeights.bone[1] : 0,
-				vertices[vertIdx].boneWeights.numBones > 2 ? vertices[vertIdx].boneWeights.bone[2] : 0
+				vertices[vertIdx].boneWeights.numBones > 1 ? vertices[vertIdx].boneWeights.bone[1] : static_cast<int8_t>(0),
+				vertices[vertIdx].boneWeights.numBones > 2 ? vertices[vertIdx].boneWeights.bone[2] : static_cast<int8_t>(0)
 			};
 		}
 	} else {
@@ -87,8 +87,8 @@ VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 				};
 				mpBones[vertIdxDst] = {
 					vertices[vertIdxSrc].boneWeights.bone[0],
-					vertices[vertIdxSrc].boneWeights.numBones > 1 ? vertices[vertIdxSrc].boneWeights.bone[1] : 0,
-					vertices[vertIdxSrc].boneWeights.numBones > 2 ? vertices[vertIdxSrc].boneWeights.bone[2] : 0
+					vertices[vertIdxSrc].boneWeights.numBones > 1 ? vertices[vertIdxSrc].boneWeights.bone[1] : static_cast<int8_t>(0),
+					vertices[vertIdxSrc].boneWeights.numBones > 2 ? vertices[vertIdxSrc].boneWeights.bone[2] : static_cast<int8_t>(0)
 				};
 			}
 

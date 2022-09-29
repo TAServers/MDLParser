@@ -9,7 +9,7 @@ namespace MDLStructs
 {
 	struct ByteVector
 	{
-		uint8_t x, y, z;
+		int8_t x, y, z;
 	};
 
 	struct Vector2D

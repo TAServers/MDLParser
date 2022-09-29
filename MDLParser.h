@@ -4,12 +4,18 @@
 
 #include "source/Structs.h"
 
+class VVD;
+class VTX;
+
 class MDL
 {
 private:
 	bool mIsValid = false;
 
-	uint8_t* mpData;
+	VVD* mVVD = nullptr;
+	VTX* mVTX = nullptr;
+
+	uint8_t* mpData = nullptr;
 	size_t mDataSize = 0U;
 
 	const MDLStructs::Header* mpHeader;
@@ -27,12 +33,17 @@ private:
 	}
 
 public:
-	// Parses a MDL file from raw data
-	// You will also need to parse the VVD file for vertex data
-	MDL(const uint8_t* pFileData, const size_t dataSize);
+	// Parses a MDL file from raw data, along with VVD and VTX
+	MDL(
+		const uint8_t* pMDLData, const size_t mdlSize,
+		const uint8_t* pVVDData, const size_t vvdSize,
+		const uint8_t* pVTXData, const size_t vtxSize
+	);
 	~MDL();
 
 	bool IsValid() const;
+
+	int32_t GetChecksum() const;
 };
 
 class VVD
@@ -49,7 +60,9 @@ private:
 	MDLStructs::ByteVector* mpBones     = nullptr;
 
 public:
+	VVD() {}
 	VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum);
+
 	~VVD();
 
 	bool IsValid() const;
@@ -65,4 +78,13 @@ public:
 
 	const MDLStructs::Vector* GetWeights() const;
 	const MDLStructs::ByteVector* GetBoneIDs() const;
+};
+
+class VTX
+{
+private:
+	bool mIsValid = false;
+
+public:
+	VTX() {}
 };
