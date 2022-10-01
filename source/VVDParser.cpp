@@ -62,7 +62,13 @@ VVD::~VVD()
 
 bool VVD::IsValid() const { return mIsValid; }
 
-size_t VVD::GetNumVertices() const { return mNumVertices; }
+int32_t VVD::GetNumVertices() const { return mNumVertices; }
 
-const Vertex* VVD::GetVertices() const { return mpVertices; }
-const Vector4D* VVD::GetTangents() const { return mpTangents; }
+const Vertex* VVD::GetVertex(const int i) const
+{
+	return mpVertices + i;
+}
+const Vector4D* VVD::GetTangent(const int i) const
+{
+	return mpTangents + i;
+}

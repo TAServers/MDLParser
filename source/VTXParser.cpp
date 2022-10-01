@@ -5,7 +5,7 @@
 
 using namespace VTXStructs;
 
-VTX::VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum, const int32_t numLoDs)
+VTX::VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum)
 {
 	if (pFileData == nullptr || dataSize == 0 || dataSize < sizeof(Header)) return;
 
@@ -16,14 +16,13 @@ VTX::VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 	mpHeader = reinterpret_cast<const Header*>(mpData);
 	if (
 		mpHeader->version != Header::SUPPORTED_VERSION ||
-		mpHeader->checksum != checksum ||
-		mpHeader->numLoDs != numLoDs // number of LoDs should match the MDL
+		mpHeader->checksum != checksum
 	) return;
 
 	for (int i = 0; i < mpHeader->numBodyParts; i++) {
-		const BodyPartHeader* bodypart = mpHeader->GetBodyPartHeader(i);
+		const BodyPart* bodypart = mpHeader->GetBodyPart(i);
 		for (int j = 0; j < bodypart->numModels; j++) {
-			if (bodypart->GetModelHeader(j)->numLoDs != numLoDs) return; // number of LoDs should match the MDL
+			if (bodypart->GetModel(j)->numLoDs != mpHeader->numLoDs) return; // number of LoDs should match the header
 		}
 	}
 
@@ -37,16 +36,16 @@ VTX::~VTX()
 
 bool VTX::IsValid() const { return mIsValid; }
 
-const VTXStructs::MaterialReplacementListHeader* VTX::GetMaterialReplacementList(const int i) const
+const VTXStructs::MaterialReplacementList* VTX::GetMaterialReplacementList(const int i) const
 {
-	return mpHeader->GetMaterialReplacementListHeader(i);
+	return mpHeader->GetMaterialReplacementList(i);
 }
 
 int32_t VTX::GetNumBodyParts() const
 {
 	return mpHeader->numBodyParts;
 }
-const VTXStructs::BodyPartHeader* VTX::GetBodyPart(const int i) const
+const VTXStructs::BodyPart* VTX::GetBodyPart(const int i) const
 {
-	return mpHeader->GetBodyPartHeader(i);
+	return mpHeader->GetBodyPart(i);
 }

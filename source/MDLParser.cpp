@@ -31,7 +31,7 @@ MDL::MDL(
 	mpVVD = new (std::nothrow) VVD(pVVDData, vvdSize, mpHeader->checksum);
 	if (mpVVD == nullptr || !mpVVD->IsValid()) return;
 
-	mpVTX = new (std::nothrow) VTX();
+	mpVTX = new (std::nothrow) VTX(pVTXData, vtxSize, mpHeader->checksum);
 	if (mpVTX == nullptr || !mpVTX->IsValid()) return;
 
 	mIsValid = true;
@@ -47,3 +47,23 @@ MDL::~MDL()
 bool MDL::IsValid() const { return mIsValid; }
 
 int32_t MDL::GetChecksum() const { return mpHeader->checksum; }
+
+int32_t MDL::GetNumBodyParts() const { return mpHeader->bodypartCount; }
+void MDL::GetBodyPart(
+	const int i,
+	const BodyPart** pMDLBodyPartOut,
+	const VTXStructs::BodyPart** pVTXBodyPartOut
+) const
+{
+	*pMDLBodyPartOut = mpHeader->GetBodyPart(i);
+	*pVTXBodyPartOut = mpVTX->GetBodyPart(i);
+}
+
+const VVDStructs::Vertex* MDL::GetVertex(const int i) const
+{
+	return mpVVD->GetVertex(i);
+}
+const MDLStructs::Vector4D* MDL::GetTangent(const int i) const
+{
+	return mpVVD->GetTangent(i);
+}

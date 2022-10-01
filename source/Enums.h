@@ -38,21 +38,51 @@ namespace VTXEnums
 {
 	enum class StripFlags : uint8_t
 	{
+		NONE = 0,
+
 		IS_TRILIST = 0x01,
 		IS_TRISTRIP = 0x02
 	};
+	inline StripFlags operator&(const StripFlags& a, const StripFlags& b)
+	{
+		return static_cast<StripFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
+	inline StripFlags operator|(const StripFlags& a, const StripFlags& b)
+	{
+		return static_cast<StripFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
 
 	enum class StripGroupFlags : uint8_t
 	{
+		NONE = 0,
+
 		IS_FLEXED = 0x01,
 		IS_HWSKINNED = 0x02,
 		IS_DELTA_FLEXED = 0x04,
 		SUPPRESS_HW_MORPH = 0x08
 	};
+	inline StripGroupFlags operator&(const StripGroupFlags& a, const StripGroupFlags& b)
+	{
+		return static_cast<StripGroupFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
+	inline StripGroupFlags operator|(const StripGroupFlags& a, const StripGroupFlags& b)
+	{
+		return static_cast<StripGroupFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
 
 	enum class MeshFlags : uint8_t
 	{
+		NONE = 0,
+
 		IS_TEETH = 0x01,
 		IS_EYES = 0x02
 	};
+	inline MeshFlags operator&(const MeshFlags& a, const MeshFlags& b)
+	{
+		return static_cast<MeshFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
+	inline MeshFlags operator|(const MeshFlags& a, const MeshFlags& b)
+	{
+		return static_cast<MeshFlags>(static_cast<uint8_t>(a) & static_cast<uint8_t>(b));
+	}
 }

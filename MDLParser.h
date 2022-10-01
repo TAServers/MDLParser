@@ -34,6 +34,16 @@ public:
 	bool IsValid() const;
 
 	int32_t GetChecksum() const;
+
+	int32_t GetNumBodyParts() const;
+	void GetBodyPart(
+		const int i,
+		const MDLStructs::BodyPart** pMDLBodyPartOut,
+		const VTXStructs::BodyPart** pVTXBodyPartOut
+	) const;
+
+	const VVDStructs::Vertex* GetVertex(const int i) const;
+	const MDLStructs::Vector4D* GetTangent(const int i) const;
 };
 
 class VVD
@@ -41,7 +51,7 @@ class VVD
 private:
 	bool mIsValid = false;
 
-	size_t mNumVertices = 0U;
+	int32_t mNumVertices = 0U;
 	VVDStructs::Vertex*   mpVertices = nullptr;
 	MDLStructs::Vector4D* mpTangents = nullptr;
 
@@ -53,10 +63,10 @@ public:
 
 	bool IsValid() const;
 
-	size_t GetNumVertices() const;
+	int32_t GetNumVertices() const;
 
-	const VVDStructs::Vertex* GetVertices() const;
-	const MDLStructs::Vector4D* GetTangents() const;
+	const VVDStructs::Vertex* GetVertex(const int i) const;
+	const MDLStructs::Vector4D* GetTangent(const int i) const;
 };
 
 class VTX
@@ -69,14 +79,14 @@ private:
 
 public:
 	VTX() {}
-	VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum, const int32_t numLoDs);
+	VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum);
 
 	~VTX();
 
 	bool IsValid() const;
 
-	const VTXStructs::MaterialReplacementListHeader* GetMaterialReplacementList(const int i) const;
+	const VTXStructs::MaterialReplacementList* GetMaterialReplacementList(const int i) const;
 
 	int32_t GetNumBodyParts() const;
-	const VTXStructs::BodyPartHeader* GetBodyPart(const int i) const;
+	const VTXStructs::BodyPart* GetBodyPart(const int i) const;
 };
