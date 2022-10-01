@@ -484,6 +484,7 @@ namespace VTXStructs
 		int32_t numLoDs;
 
 		int32_t materialReplacementListOffset;
+		STRUCT_GETTER(MaterialReplacementListHeader, materialReplacementListOffset)
 
 		int32_t numBodyParts;
 		int32_t bodyPartOffset;

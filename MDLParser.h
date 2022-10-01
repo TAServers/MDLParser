@@ -12,25 +12,15 @@ class MDL
 private:
 	bool mIsValid = false;
 
-	VVD* mVVD = nullptr;
-	VTX* mVTX = nullptr;
+	VVD* mpVVD = nullptr;
+	VTX* mpVTX = nullptr;
 
 	uint8_t* mpData = nullptr;
-	size_t mDataSize = 0U;
 
 	const MDLStructs::Header* mpHeader;
 
 	bool mHasHeader2 = false;
 	const MDLStructs::Header2* mpHeader2 = nullptr;
-
-	const MDLStructs::Bone* mpBones;
-
-	template<class T>
-	const T* ParseSection(const int32_t offset, const int32_t count)
-	{
-		if (offset < 0 || offset + count * sizeof(T) > mDataSize) return nullptr;
-		return reinterpret_cast<const T*>(mpData + offset);
-	}
 
 public:
 	// Parses a MDL file from raw data, along with VVD and VTX
@@ -74,6 +64,19 @@ class VTX
 private:
 	bool mIsValid = false;
 
+	uint8_t* mpData = nullptr;
+	const VTXStructs::Header* mpHeader;
+
 public:
 	VTX() {}
+	VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum, const int32_t numLoDs);
+
+	~VTX();
+
+	bool IsValid() const;
+
+	const VTXStructs::MaterialReplacementListHeader* GetMaterialReplacementList(const int i) const;
+
+	int32_t GetNumBodyParts() const;
+	const VTXStructs::BodyPartHeader* GetBodyPart(const int i) const;
 };
