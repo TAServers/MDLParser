@@ -36,11 +36,23 @@ namespace MDLEnums
 
 namespace VTXEnums
 {
-	enum class Flags : uint8_t
+	enum class StripFlags : uint8_t
+	{
+		IS_TRILIST = 0x01,
+		IS_TRISTRIP = 0x02
+	};
+
+	enum class StripGroupFlags : uint8_t
 	{
 		IS_FLEXED = 0x01,
 		IS_HWSKINNED = 0x02,
 		IS_DELTA_FLEXED = 0x04,
 		SUPPRESS_HW_MORPH = 0x08
+	};
+
+	enum class MeshFlags : uint8_t
+	{
+		IS_TEETH = 0x01,
+		IS_EYES = 0x02
 	};
 }

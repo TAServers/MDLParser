@@ -46,7 +46,12 @@ namespace MDLStructs
 
 	struct Bone
 	{
-		int32_t szNameIndex; // ??
+		int32_t szNameIndex;
+		inline const char* GetName()
+		{
+			return reinterpret_cast<const char*>(this) + szNameIndex;
+		}
+
 		int32_t parent;
 		int32_t boneControllers[6];
 
@@ -154,7 +159,11 @@ namespace MDLStructs
 
 	struct BodyPart
 	{
-		int32_t szNameIndex; // ??
+		int32_t szNameIndex;
+		inline const char* GetName()
+		{
+			return reinterpret_cast<const char*>(this) + szNameIndex;
+		}
 
 		int32_t modelsCount;
 		int32_t base;
@@ -357,6 +366,108 @@ namespace VVDStructs
 
 namespace VTXStructs
 {
+	// would otherwise be padded to 10 bytes
+	struct __attribute__((packed)) Vertex
+	{
+		uint8_t boneWeightIndex[3];
+		uint8_t numBones;
+
+		uint16_t origMeshVertId;
+
+		int8_t boneId[3];
+	};
+
+	struct StripHeader
+	{
+		int32_t numIndices;
+		int32_t indexOffset;
+		inline const uint16_t* GetIndex(const int i) const
+		{
+			return reinterpret_cast<const uint16_t*>(reinterpret_cast<const uint8_t*>(this) + indexOffset) + i;
+		}
+
+		int32_t numVerts;
+		int32_t vertOffset;
+		STRUCT_GETTER(Vertex, vertOffset)
+
+		int16_t numBones;
+
+		VTXEnums::StripFlags flags;
+
+		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
+	};
+
+	struct StripGroupHeader
+	{
+		int32_t numVerts;
+		int32_t vertOffset;
+		STRUCT_GETTER(Vertex, vertOffset)
+
+		int32_t numIndices;
+		int32_t indexOffset;
+		inline const uint16_t* GetIndex(const int i) const
+		{
+			return reinterpret_cast<const uint16_t*>(reinterpret_cast<const uint8_t*>(this) + indexOffset) + i;
+		}
+
+		int32_t numStrips;
+		int32_t stripOffset;
+		STRUCT_GETTER(StripHeader, stripOffset)
+
+		VTXEnums::StripGroupFlags flags;
+
+		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
+	};
+
+	struct MeshHeader
+	{
+		int32_t numStripGroups;
+		int32_t stripGroupHeaderOffset;
+		STRUCT_GETTER(StripGroupHeader, stripGroupHeaderOffset)
+
+		VTXEnums::MeshFlags flags;
+	};
+
+	struct ModelLoDHeader
+	{
+		int32_t numMeshes;
+		int32_t meshOffset;
+		STRUCT_GETTER(MeshHeader, meshOffset)
+
+		float switchPoint;
+	};
+
+	struct ModelHeader
+	{
+		int32_t numLoDs;
+		int32_t lodOffset;
+		STRUCT_GETTER(ModelLoDHeader, lodOffset)
+	};
+
+	struct BodyPartHeader
+	{
+		int32_t numModels;
+		int32_t modelOffset;
+		STRUCT_GETTER(ModelHeader, modelOffset)
+	};
+
+	struct MaterialReplacementHeader
+	{
+		int16_t materialId;
+		int32_t replacementMaterialNameOffset;
+		inline const char* GetMaterialReplacementName() const
+		{
+			return reinterpret_cast<const char*>(this) + replacementMaterialNameOffset;
+		}
+	};
+
+	struct MaterialReplacementListHeader
+	{
+		int32_t replacementCount;
+		int32_t replacementOffset;
+		STRUCT_GETTER(MaterialReplacementHeader, replacementOffset)
+	};
+
 	struct Header
 	{
 		static const int32_t SUPPORTED_VERSION = 7;
@@ -376,76 +487,7 @@ namespace VTXStructs
 
 		int32_t numBodyParts;
 		int32_t bodyPartOffset;
-	};
-
-	struct BodyPartHeader
-	{
-		int32_t numModels;
-		int32_t modelOffset;
-	};
-
-	struct ModelHeader
-	{
-		int32_t numLoDs;
-		int32_t lodOffset;
-	};
-
-	struct ModelLoDHeader
-	{
-		int32_t numMeshes;
-		int32_t meshOffset;
-
-		float switchPoint;
-	};
-
-	struct MeshHeader
-	{
-		int32_t numStripGroups;
-		int32_t stripGroupHeaderOffset;
-
-		uint8_t flags;
-	};
-
-	struct StripGroupHeader
-	{
-		int32_t numVerts;
-		int32_t vertOffset;
-
-		int32_t numIndices;
-		int32_t indexOffset;
-
-		int32_t numStrips;
-		int32_t stripOffset;
-
-		uint8_t flags;
-		
-		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
-	};
-
-	struct StripHeader
-	{
-		int32_t numIndices;
-		int32_t indexOffset;
-
-		int32_t numVerts;
-		int32_t vertOffset;
-
-		int16_t numBones;
-
-		uint8_t flags;
-
-		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
-	};
-
-	// would otherwise be padded to 10 bytes
-	struct __attribute__((packed)) Vertex
-	{
-		uint8_t boneWeightIndex[3];
-		uint8_t numBones;
-
-		uint16_t origMeshVertId;
-
-		int8_t boneId[3];
+		STRUCT_GETTER(BodyPartHeader, bodyPartOffset)
 	};
 }
 

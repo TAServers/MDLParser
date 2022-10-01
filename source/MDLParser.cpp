@@ -25,8 +25,8 @@ MDL::MDL(
 	if (mpData == nullptr) return;
 	memcpy(mpData, pMDLData, mDataSize);
 
-	mpHeader = ParseSection<Header>(0, 1);
-	if (mpHeader == nullptr || mpHeader->id != FILE_ID) return;
+	mpHeader = reinterpret_cast<const Header*>(mpData);
+	if (mpHeader->id != FILE_ID || mpHeader->version > 48) return;
 
 	mVVD = new (std::nothrow) VVD(pVVDData, vvdSize, mpHeader->checksum);
 	if (mVVD == nullptr || !mVVD->IsValid()) return;
