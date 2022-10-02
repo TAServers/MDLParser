@@ -44,6 +44,8 @@ public:
 
 	const VVDStructs::Vertex* GetVertex(const int i) const;
 	const MDLStructs::Vector4D* GetTangent(const int i) const;
+
+	const char* GetMaterial(const int skin, int materialId) const;
 };
 
 class VVD
@@ -85,7 +87,7 @@ public:
 
 	bool IsValid() const;
 
-	const VTXStructs::MaterialReplacementList* GetMaterialReplacementList(const int i) const;
+	const VTXStructs::MaterialReplacementList* GetMaterialReplacementList(const int lod) const;
 
 	int32_t GetNumBodyParts() const;
 	const VTXStructs::BodyPart* GetBodyPart(const int i) const;

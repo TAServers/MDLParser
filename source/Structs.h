@@ -87,6 +87,26 @@ namespace MDLStructs
 		int32_t unused[8];
 	};
 
+	struct __attribute__((packed)) Texture
+	{
+		int32_t szNameIndex;
+		inline const char* GetName() const
+		{
+			return reinterpret_cast<const char*>(this) + szNameIndex;
+		}
+
+		int32_t flags;
+
+		int32_t used; // ?????
+		int32_t unused1;
+
+		// Two pointers that are unused even in engine
+		int32_t material;
+		int32_t clientmaterial;
+
+		int32_t unused[10];
+	};
+
 	struct __attribute__((packed)) Flex
 	{
 		int32_t flexDesc;
@@ -167,7 +187,7 @@ namespace MDLStructs
 	struct __attribute__((packed)) BodyPart
 	{
 		int32_t szNameIndex;
-		inline const char* GetName()
+		inline const char* GetName() const
 		{
 			return reinterpret_cast<const char*>(this) + szNameIndex;
 		}
@@ -220,6 +240,7 @@ namespace MDLStructs
 
 		int32_t textureCount;
 		int32_t textureOffset;
+		STRUCT_GETTER(Texture, textureOffset)
 
 		int32_t textureDirCount;
 		int32_t textureDirOffset;
@@ -227,6 +248,11 @@ namespace MDLStructs
 		int32_t skinRefCount;
 		int32_t skinFamilyCount;
 		int32_t skinRefOffset;
+		inline int16_t GetSkin(const int family, const int material) const
+		{
+			const int16_t* skinTbl = reinterpret_cast<const int16_t*>(reinterpret_cast<const uint8_t*>(this) + skinRefOffset);
+			return skinTbl[family * skinRefCount + material];
+		}
 
 		int32_t bodypartCount;
 		int32_t bodypartOffset;

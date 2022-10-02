@@ -67,3 +67,18 @@ const MDLStructs::Vector4D* MDL::GetTangent(const int i) const
 {
 	return mpVVD->GetTangent(i);
 }
+
+
+const char* MDL::GetMaterial(const int skin, int materialId) const
+{
+	materialId = mpHeader->GetSkin(skin, materialId);
+
+	// The VTX file has "material replacement" lists, however I can't find a single usage of them in the engine
+	// 
+	// I'm not sure if they're meant to be indexed with the material id,
+	// or if you loop over them and compare the desired id with the id in the struct
+	// 
+	// If they are used then it's in one of the closed source areas of the engine
+
+	return mpHeader->GetTexture(materialId)->GetName();
+}

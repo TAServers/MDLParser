@@ -36,9 +36,9 @@ VTX::~VTX()
 
 bool VTX::IsValid() const { return mIsValid; }
 
-const VTXStructs::MaterialReplacementList* VTX::GetMaterialReplacementList(const int i) const
+const VTXStructs::MaterialReplacementList* VTX::GetMaterialReplacementList(const int lod) const
 {
-	return mpHeader->GetMaterialReplacementList(i);
+	return mpHeader->GetMaterialReplacementList(lod);
 }
 
 int32_t VTX::GetNumBodyParts() const
