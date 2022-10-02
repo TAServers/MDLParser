@@ -46,6 +46,8 @@ public:
 	const VVDStructs::Vertex* GetVertex(const int i) const;
 	const MDLStructs::Vector4D* GetTangent(const int i) const;
 
+	int32_t GetNumMaterials() const;
+	int32_t GetNumSkinFamilies() const;
 	int16_t GetMaterialIdx(const int skin, int materialId) const;
 	const char* GetMaterial(const int i) const;
 

@@ -72,6 +72,15 @@ const MDLStructs::Vector4D* MDL::GetTangent(const int i) const
 	return mpVVD->GetTangent(i);
 }
 
+int32_t MDL::GetNumMaterials() const
+{
+	return mpHeader->textureCount;
+}
+int32_t MDL::GetNumSkinFamilies() const
+{
+	return mpHeader->skinFamilyCount;
+}
+
 int16_t MDL::GetMaterialIdx(const int skin, int materialId) const
 {
 	// The VTX file has "material replacement" lists, however I can't find a single usage of them in the engine
@@ -83,7 +92,6 @@ int16_t MDL::GetMaterialIdx(const int skin, int materialId) const
 
 	return mpHeader->GetSkin(skin, materialId);
 }
-
 const char* MDL::GetMaterial(const int i) const
 {
 	return mpHeader->GetTexture(i)->GetName();
