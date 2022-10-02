@@ -42,10 +42,14 @@ public:
 		const VTXStructs::BodyPart** pVTXBodyPartOut
 	) const;
 
+	int32_t GetNumVertices() const;
 	const VVDStructs::Vertex* GetVertex(const int i) const;
 	const MDLStructs::Vector4D* GetTangent(const int i) const;
 
 	const char* GetMaterial(const int skin, int materialId) const;
+
+	int32_t GetNumBones() const;
+	const MDLStructs::Bone* GetBone(const int i) const;
 };
 
 class VVD

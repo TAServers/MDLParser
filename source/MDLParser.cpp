@@ -59,6 +59,10 @@ void MDL::GetBodyPart(
 	*pVTXBodyPartOut = mpVTX->GetBodyPart(i);
 }
 
+int32_t MDL::GetNumVertices() const
+{
+	return mpVVD->GetNumVertices();
+}
 const VVDStructs::Vertex* MDL::GetVertex(const int i) const
 {
 	return mpVVD->GetVertex(i);
@@ -81,4 +85,13 @@ const char* MDL::GetMaterial(const int skin, int materialId) const
 	// If they are used then it's in one of the closed source areas of the engine
 
 	return mpHeader->GetTexture(materialId)->GetName();
+}
+
+int32_t MDL::GetNumBones() const
+{
+	return mpHeader->boneCount;
+}
+const Bone* MDL::GetBone(const int i) const
+{
+	return mpHeader->GetBone(i);
 }
