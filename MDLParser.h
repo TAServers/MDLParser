@@ -13,6 +13,8 @@ private:
 	VVDStructs::Vertex*   mpVertices = nullptr;
 	MDLStructs::Vector4D* mpTangents = nullptr;
 
+	int32_t mNumLoDs = 0;
+
 	void CopyFrom(const VVD& src);
 
 public:
@@ -29,6 +31,8 @@ public:
 
 	const VVDStructs::Vertex* GetVertex(const int i) const;
 	const MDLStructs::Vector4D* GetTangent(const int i) const;
+
+	int32_t GetNumLoDs() const;
 };
 
 class VTX
@@ -100,6 +104,8 @@ public:
 		const MDLStructs::BodyPart** pMDLBodyPartOut,
 		const VTXStructs::BodyPart** pVTXBodyPartOut
 	) const;
+
+	int32_t GetNumLoDs() const;
 
 	int32_t GetNumVertices() const;
 	const VVDStructs::Vertex* GetVertex(const int i) const;

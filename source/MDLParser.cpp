@@ -88,6 +88,11 @@ void MDL::GetBodyPart(
 	*pVTXBodyPartOut = mVTX.GetBodyPart(i);
 }
 
+int32_t MDL::GetNumLoDs() const
+{
+	return mVVD.GetNumLoDs();
+}
+
 int32_t MDL::GetNumVertices() const
 {
 	return mVVD.GetNumVertices();

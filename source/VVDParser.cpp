@@ -13,6 +13,7 @@ void VVD::CopyFrom(const VVD& src)
 
 	if (mIsValid) {
 		mNumVertices = src.mNumVertices;
+		mNumLoDs = src.mNumLoDs;
 
 		mpVertices = reinterpret_cast<Vertex*>(malloc(sizeof(Vertex) * mNumVertices));
 		mpTangents = reinterpret_cast<Vector4D*>(malloc(sizeof(Vector4D) * mNumVertices));
@@ -49,6 +50,8 @@ VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 	mpVertices = reinterpret_cast<Vertex*>(malloc(sizeof(Vertex) * mNumVertices));
 	mpTangents = reinterpret_cast<Vector4D*>(malloc(sizeof(Vector4D) * mNumVertices));
 	if (mpVertices == nullptr || mpTangents == nullptr) return;
+
+	mNumLoDs = header->numLoDs;
 
 	if (header->numFixups == 0) {
 		memcpy(mpTangents, pFileData + header->tangentDataOffset, sizeof(Vector4D) * mNumVertices);
@@ -95,4 +98,9 @@ const Vertex* VVD::GetVertex(const int i) const
 const Vector4D* VVD::GetTangent(const int i) const
 {
 	return mpTangents + i;
+}
+
+int32_t VVD::GetNumLoDs() const
+{
+	return mNumLoDs;
 }
