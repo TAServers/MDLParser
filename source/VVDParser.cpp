@@ -38,7 +38,7 @@ VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum
 
 			memcpy(
 				mpTangents + offset,
-				reinterpret_cast<const Vertex*>(pFileData + header->tangentDataOffset) + fixups[fixupIdx].sourceVertexId,
+				reinterpret_cast<const Vector4D*>(pFileData + header->tangentDataOffset) + fixups[fixupIdx].sourceVertexId,
 				sizeof(Vector4D) * fixups[fixupIdx].numVertices
 			);
 			memcpy(
