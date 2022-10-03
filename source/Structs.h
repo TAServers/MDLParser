@@ -115,6 +115,9 @@ namespace VTXStructs
 
 		VTXEnums::StripFlags flags;
 
+		int32_t numBoneStateChanges;
+		int32_t boneStateChangeOffset;
+
 		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
 	};
 
@@ -124,7 +127,7 @@ namespace VTXStructs
 		int32_t vertOffset;
 		STRUCT_GETTER(Vertex, vertOffset)
 
-			int32_t numIndices;
+		int32_t numIndices;
 		int32_t indexOffset;
 		inline const uint16_t* GetIndex(const int i) const
 		{
@@ -135,7 +138,7 @@ namespace VTXStructs
 		int32_t stripOffset;
 		STRUCT_GETTER(Strip, stripOffset)
 
-			VTXEnums::StripGroupFlags flags;
+		VTXEnums::StripGroupFlags flags;
 
 		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
 	};
@@ -146,7 +149,7 @@ namespace VTXStructs
 		int32_t stripGroupHeaderOffset;
 		STRUCT_GETTER(StripGroup, stripGroupHeaderOffset)
 
-			VTXEnums::MeshFlags flags;
+		VTXEnums::MeshFlags flags;
 	};
 
 	struct __attribute__((packed)) ModelLoD
@@ -155,7 +158,7 @@ namespace VTXStructs
 		int32_t meshOffset;
 		STRUCT_GETTER(Mesh, meshOffset)
 
-			float switchPoint;
+		float switchPoint;
 	};
 
 	struct __attribute__((packed)) Model
@@ -207,7 +210,7 @@ namespace VTXStructs
 		int32_t materialReplacementListOffset;
 		STRUCT_GETTER(MaterialReplacementList, materialReplacementListOffset)
 
-			int32_t numBodyParts;
+		int32_t numBodyParts;
 		int32_t bodyPartOffset;
 		STRUCT_GETTER(BodyPart, bodyPartOffset)
 	};
