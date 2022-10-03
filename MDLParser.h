@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 #include "source/Structs.h"
 
@@ -114,7 +115,7 @@ public:
 	int32_t GetNumMaterials() const;
 	int32_t GetNumSkinFamilies() const;
 	int16_t GetMaterialIdx(const int skin, int materialId) const;
-	const char* GetMaterial(const int i) const;
+	std::string GetMaterial(const int i) const;
 
 	int32_t GetNumBones() const;
 	const MDLStructs::Bone* GetBone(const int i) const;
