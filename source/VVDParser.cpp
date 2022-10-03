@@ -7,6 +7,30 @@ using namespace VVDStructs;
 
 constexpr int32_t FILE_ID = 'I' + ('D' << 8) + ('S' << 16) + ('V' << 24);
 
+void VVD::CopyFrom(const VVD& src)
+{
+	mIsValid = src.mIsValid;
+
+	if (mIsValid) {
+		mNumVertices = src.mNumVertices;
+
+		mpVertices = reinterpret_cast<Vertex*>(malloc(sizeof(Vertex) * mNumVertices));
+		mpTangents = reinterpret_cast<Vector4D*>(malloc(sizeof(Vector4D) * mNumVertices));
+
+		memcpy(mpVertices, src.mpVertices, sizeof(Vertex) * mNumVertices);
+		memcpy(mpTangents, src.mpTangents, sizeof(Vector4D) * mNumVertices);
+	}
+}
+VVD::VVD(const VVD& src)
+{
+	CopyFrom(src);
+}
+VVD& VVD::operator=(const VVD& src)
+{
+	CopyFrom(src);
+	return *this;
+}
+
 VVD::VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum)
 {
 	int32_t rootLod = 0;

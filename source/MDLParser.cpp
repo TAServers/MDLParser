@@ -9,11 +9,38 @@ using namespace MDLStructs;
 
 constexpr int32_t FILE_ID = 'I' + ('D' << 8) + ('S' << 16) + ('T' << 24);
 
+void MDL::CopyFrom(const MDL& src)
+{
+	mIsValid = src.mIsValid;
+	mVVD = src.mVVD;
+	mVTX = src.mVTX;
+
+	if (mIsValid) {
+		mDataSize = src.mDataSize;
+		mpData = static_cast<uint8_t*>(malloc(mDataSize));
+		memcpy(mpData, src.mpData, mDataSize);
+
+		mpHeader = reinterpret_cast<const Header*>(mpData);
+		mHasHeader2 = src.mHasHeader2;
+		if (mHasHeader2)
+			mpHeader2 = reinterpret_cast<const Header2*>(mpData + mpHeader->header2Offset);
+	}
+}
+MDL::MDL(const MDL& src)
+{
+	CopyFrom(src);
+}
+MDL& MDL::operator=(const MDL& src)
+{
+	CopyFrom(src);
+	return *this;
+}
+
 MDL::MDL(
 	const uint8_t* pMDLData, const size_t mdlSize,
 	const uint8_t* pVVDData, const size_t vvdSize,
 	const uint8_t* pVTXData, const size_t vtxSize
-)
+) : mDataSize(mdlSize)
 {
 	if (
 		pMDLData == nullptr || mdlSize == 0 ||
@@ -28,11 +55,15 @@ MDL::MDL(
 	mpHeader = reinterpret_cast<const Header*>(mpData);
 	if (mpHeader->id != FILE_ID || mpHeader->version > 48) return;
 
-	mpVVD = new (std::nothrow) VVD(pVVDData, vvdSize, mpHeader->checksum);
-	if (mpVVD == nullptr || !mpVVD->IsValid()) return;
+	mHasHeader2 = mpHeader->header2Offset >= sizeof(Header);
+	if (mHasHeader2)
+		mpHeader2 = reinterpret_cast<const Header2*>(mpData + mpHeader->header2Offset);
 
-	mpVTX = new (std::nothrow) VTX(pVTXData, vtxSize, mpHeader->checksum);
-	if (mpVTX == nullptr || !mpVTX->IsValid()) return;
+	mVVD = VVD(pVVDData, vvdSize, mpHeader->checksum);
+	if (!mVVD.IsValid()) return;
+
+	mVTX = VTX(pVTXData, vtxSize, mpHeader->checksum);
+	if (!mVTX.IsValid()) return;
 
 	mIsValid = true;
 }
@@ -40,8 +71,6 @@ MDL::MDL(
 MDL::~MDL()
 {
 	if (mpData != nullptr) free(mpData);
-	if (mpVVD != nullptr) delete mpVVD;
-	if (mpVTX != nullptr) delete mpVTX;
 }
 
 bool MDL::IsValid() const { return mIsValid; }
@@ -56,20 +85,20 @@ void MDL::GetBodyPart(
 ) const
 {
 	*pMDLBodyPartOut = mpHeader->GetBodyPart(i);
-	*pVTXBodyPartOut = mpVTX->GetBodyPart(i);
+	*pVTXBodyPartOut = mVTX.GetBodyPart(i);
 }
 
 int32_t MDL::GetNumVertices() const
 {
-	return mpVVD->GetNumVertices();
+	return mVVD.GetNumVertices();
 }
 const VVDStructs::Vertex* MDL::GetVertex(const int i) const
 {
-	return mpVVD->GetVertex(i);
+	return mVVD.GetVertex(i);
 }
 const MDLStructs::Vector4D* MDL::GetTangent(const int i) const
 {
-	return mpVVD->GetTangent(i);
+	return mVVD.GetTangent(i);
 }
 
 int32_t MDL::GetNumMaterials() const

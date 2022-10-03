@@ -5,13 +5,35 @@
 
 using namespace VTXStructs;
 
-VTX::VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum)
+void VTX::CopyFrom(const VTX& src)
 {
-	if (pFileData == nullptr || dataSize == 0 || dataSize < sizeof(Header)) return;
+	mIsValid = src.mIsValid;
 
-	mpData = static_cast<uint8_t*>(malloc(dataSize));
+	if (mIsValid) {
+		mDataSize = src.mDataSize;
+		mpData = static_cast<uint8_t*>(malloc(mDataSize));
+		memcpy(mpData, src.mpData, mDataSize);
+
+		mpHeader = reinterpret_cast<const Header*>(mpData);
+	}
+}
+VTX::VTX(const VTX& src)
+{
+	CopyFrom(src);
+}
+VTX& VTX::operator=(const VTX& src)
+{
+	CopyFrom(src);
+	return *this;
+}
+
+VTX::VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum) : mDataSize(dataSize)
+{
+	if (pFileData == nullptr || mDataSize == 0 || mDataSize < sizeof(Header)) return;
+
+	mpData = static_cast<uint8_t*>(malloc(mDataSize));
 	if (mpData == nullptr) return;
-	memcpy(mpData, pFileData, dataSize);
+	memcpy(mpData, pFileData, mDataSize);
 
 	mpHeader = reinterpret_cast<const Header*>(mpData);
 	if (
