@@ -126,9 +126,18 @@ int16_t MDL::GetMaterialIdx(const int skin, int materialId) const
 
 	return mpHeader->GetSkin(skin, materialId);
 }
-std::string MDL::GetMaterial(const int i) const
+const char* MDL::GetMaterialName(const int i) const
 {
-	return std::string(mpHeader->GetTextureDirectory(i)) + mpHeader->GetTexture(i)->GetName();
+	return mpHeader->GetTexture(i)->GetName();
+}
+
+int32_t MDL::GetNumMaterialDirectories() const
+{
+	return mpHeader->textureDirCount;
+}
+const char* MDL::GetMaterialDirectory(const int i) const
+{
+	return mpHeader->GetTextureDirectory(i);
 }
 
 int32_t MDL::GetNumBones() const
