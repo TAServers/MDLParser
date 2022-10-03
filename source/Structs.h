@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Enums.h"
-#include "Limits.h"
+#include "FileLimits.h"
 
 #include <cstdint>
 
