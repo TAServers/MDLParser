@@ -431,6 +431,12 @@ namespace MDLStructs
 
 		int32_t textureDirCount;
 		int32_t textureDirOffset;
+		inline const char* GetTexturePath(const int i) const
+		{
+			return reinterpret_cast<const char*>(this) + *(reinterpret_cast<const int32_t*>(
+				(reinterpret_cast<const uint8_t*>(this) + textureDirOffset)
+			) + i);
+		}
 
 		int32_t skinRefCount;
 		int32_t skinFamilyCount;
