@@ -18,21 +18,21 @@ private:
 	void CopyFrom(const VVD& src);
 
 public:
-	VVD() {}
+	VVD() = default;
 	VVD(const VVD& src);
 	VVD& operator=(const VVD& src);
 
 	VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum);
 	~VVD();
 
-	bool IsValid() const;
+	[[nodiscard]] bool IsValid() const;
 
-	int32_t GetNumVertices() const;
+	[[nodiscard]] int32_t GetNumVertices() const;
 
-	const VVDStructs::Vertex* GetVertex(const int i) const;
-	const MDLStructs::Vector4D* GetTangent(const int i) const;
+	[[nodiscard]] const VVDStructs::Vertex* GetVertex(const int i) const;
+	[[nodiscard]] const MDLStructs::Vector4D* GetTangent(const int i) const;
 
-	int32_t GetNumLoDs() const;
+	[[nodiscard]] int32_t GetNumLoDs() const;
 };
 
 class VTX
@@ -48,19 +48,19 @@ private:
 	void CopyFrom(const VTX& src);
 
 public:
-	VTX() {}
+	VTX() = default;
 	VTX(const VTX& src);
 	VTX& operator=(const VTX& src);
 
 	VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum);
 	~VTX();
 
-	bool IsValid() const;
+	[[nodiscard]] bool IsValid() const;
 
-	const VTXStructs::MaterialReplacementList* GetMaterialReplacementList(const int lod) const;
+	[[nodiscard]] const VTXStructs::MaterialReplacementList* GetMaterialReplacementList(const int lod) const;
 
-	int32_t GetNumBodyParts() const;
-	const VTXStructs::BodyPart* GetBodyPart(const int i) const;
+	[[nodiscard]] int32_t GetNumBodyParts() const;
+	[[nodiscard]] const VTXStructs::BodyPart* GetBodyPart(const int i) const;
 };
 
 class MDL
@@ -82,7 +82,7 @@ private:
 	void CopyFrom(const MDL& src);
 
 public:
-	MDL() {}
+	MDL() = default;
 	MDL(const MDL& src);
 	MDL& operator=(const MDL& src);
 
@@ -94,31 +94,31 @@ public:
 	);
 	~MDL();
 
-	bool IsValid() const;
+	[[nodiscard]] bool IsValid() const;
 
-	int32_t GetChecksum() const;
+	[[nodiscard]] int32_t GetChecksum() const;
 
-	int32_t GetNumBodyParts() const;
+	[[nodiscard]] int32_t GetNumBodyParts() const;
 	void GetBodyPart(
 		const int i,
 		const MDLStructs::BodyPart** pMDLBodyPartOut,
 		const VTXStructs::BodyPart** pVTXBodyPartOut
 	) const;
 
-	int32_t GetNumLoDs() const;
+	[[nodiscard]] int32_t GetNumLoDs() const;
 
-	int32_t GetNumVertices() const;
-	const VVDStructs::Vertex* GetVertex(const int i) const;
-	const MDLStructs::Vector4D* GetTangent(const int i) const;
+	[[nodiscard]] int32_t GetNumVertices() const;
+	[[nodiscard]] const VVDStructs::Vertex* GetVertex(const int i) const;
+	[[nodiscard]] const MDLStructs::Vector4D* GetTangent(const int i) const;
 
-	int32_t GetNumMaterials() const;
-	int32_t GetNumSkinFamilies() const;
-	int16_t GetMaterialIdx(const int skin, int materialId) const;
-	const char* GetMaterialName(const int i) const;
+	[[nodiscard]] int32_t GetNumMaterials() const;
+	[[nodiscard]] int32_t GetNumSkinFamilies() const;
+	[[nodiscard]] int16_t GetMaterialIdx(const int skin, int materialId) const;
+	[[nodiscard]] const char* GetMaterialName(const int i) const;
 
-	int32_t GetNumMaterialDirectories() const;
-	const char* GetMaterialDirectory(const int i) const;
+	[[nodiscard]] int32_t GetNumMaterialDirectories() const;
+	[[nodiscard]] const char* GetMaterialDirectory(const int i) const;
 
-	int32_t GetNumBones() const;
-	const MDLStructs::Bone* GetBone(const int i) const;
+	[[nodiscard]] int32_t GetNumBones() const;
+	[[nodiscard]] const MDLStructs::Bone* GetBone(const int i) const;
 };
