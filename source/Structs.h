@@ -41,6 +41,8 @@ namespace MDLStructs
 	};
 }
 
+#pragma pack(push, 1)
+
 namespace VVDStructs
 {
 	using MDLStructs::MAX_NUM_LODS;
@@ -50,7 +52,7 @@ namespace VVDStructs
 	using MDLStructs::Vector;
 	using MDLStructs::Vector4D;
 
-	struct __attribute__((packed)) Header
+	struct Header
 	{
 		static const int32_t SUPPORTED_VERSION = 4;
 
@@ -68,21 +70,21 @@ namespace VVDStructs
 		int32_t tangentDataOffset;
 	};
 
-	struct __attribute__((packed)) Fixup
+	struct Fixup
 	{
 		int32_t lod;
 		int32_t sourceVertexId;
 		int32_t numVertices;
 	};
 
-	struct __attribute__((packed)) BoneWeight
+	struct BoneWeight
 	{
 		float weight[MAX_NUM_BONES_PER_VERT];
 		int8_t bone[MAX_NUM_BONES_PER_VERT];
 		uint8_t numBones;
 	};
 
-	struct __attribute__((packed)) Vertex
+	struct Vertex
 	{
 		BoneWeight boneWeights;
 		Vector pos;
@@ -93,7 +95,7 @@ namespace VVDStructs
 
 namespace VTXStructs
 {
-	struct __attribute__((packed)) Vertex
+	struct Vertex
 	{
 		uint8_t boneWeightIndex[3];
 		uint8_t numBones;
@@ -103,7 +105,7 @@ namespace VTXStructs
 		int8_t boneId[3];
 	};
 
-	struct __attribute__((packed)) Strip
+	struct Strip
 	{
 		int32_t numIndices;
 		int32_t indexOffset;
@@ -121,7 +123,7 @@ namespace VTXStructs
 		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
 	};
 
-	struct __attribute__((packed)) StripGroup
+	struct StripGroup
 	{
 		int32_t numVerts;
 		int32_t vertOffset;
@@ -143,7 +145,7 @@ namespace VTXStructs
 		// this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
 	};
 
-	struct __attribute__((packed)) Mesh
+	struct Mesh
 	{
 		int32_t numStripGroups;
 		int32_t stripGroupHeaderOffset;
@@ -152,7 +154,7 @@ namespace VTXStructs
 		VTXEnums::MeshFlags flags;
 	};
 
-	struct __attribute__((packed)) ModelLoD
+	struct ModelLoD
 	{
 		int32_t numMeshes;
 		int32_t meshOffset;
@@ -161,21 +163,21 @@ namespace VTXStructs
 		float switchPoint;
 	};
 
-	struct __attribute__((packed)) Model
+	struct Model
 	{
 		int32_t numLoDs;
 		int32_t lodOffset;
 		STRUCT_GETTER(ModelLoD, lodOffset)
 	};
 
-	struct __attribute__((packed)) BodyPart
+	struct BodyPart
 	{
 		int32_t numModels;
 		int32_t modelOffset;
 		STRUCT_GETTER(Model, modelOffset)
 	};
 
-	struct __attribute__((packed)) MaterialReplacement
+	struct MaterialReplacement
 	{
 		int16_t materialId;
 		int32_t replacementMaterialNameOffset;
@@ -185,14 +187,14 @@ namespace VTXStructs
 		}
 	};
 
-	struct __attribute__((packed)) MaterialReplacementList
+	struct MaterialReplacementList
 	{
 		int32_t replacementCount;
 		int32_t replacementOffset;
 		STRUCT_GETTER(MaterialReplacement, replacementOffset)
 	};
 
-	struct __attribute__((packed)) Header
+	struct Header
 	{
 		static const int32_t SUPPORTED_VERSION = 7;
 
@@ -220,19 +222,19 @@ namespace MDLStructs
 {
 	// These are not used and are only here for alignment
 	// Pointers have been replaced with int32 to mimic a 32 bit system
-	struct __attribute__((packed)) mstudio_modelvertexdata_t
+	struct mstudio_modelvertexdata_t
 	{
 		int32_t pVertexData;
 		int32_t pTangentData;
 	};
 
-	struct __attribute__((packed)) mstudio_meshvertexdata_t
+	struct mstudio_meshvertexdata_t
 	{
 		int32_t modelvertexdata;
 		int32_t numLODVertexes[MAX_NUM_LODS];
 	};
 
-	struct __attribute__((packed)) Bone
+	struct Bone
 	{
 		int32_t szNameIndex;
 		inline const char* GetName()
@@ -266,7 +268,7 @@ namespace MDLStructs
 		int32_t unused[8];
 	};
 
-	struct __attribute__((packed)) Texture
+	struct Texture
 	{
 		int32_t szNameIndex;
 		inline const char* GetName() const
@@ -286,7 +288,7 @@ namespace MDLStructs
 		int32_t unused[10];
 	};
 
-	struct __attribute__((packed)) Flex
+	struct Flex
 	{
 		int32_t flexDesc;
 
@@ -309,7 +311,7 @@ namespace MDLStructs
 	};
 
 	struct Model;
-	struct __attribute__((packed)) Mesh
+	struct Mesh
 	{
 		int32_t material;
 
@@ -342,7 +344,7 @@ namespace MDLStructs
 		int unused[8];
 	};
 
-	struct __attribute__((packed)) Model
+	struct Model
 	{
 		char name[64];
 
@@ -371,7 +373,7 @@ namespace MDLStructs
 		int32_t unused[8];
 	};
 
-	struct __attribute__((packed)) BodyPart
+	struct BodyPart
 	{
 		int32_t szNameIndex;
 		inline const char* GetName() const
@@ -386,7 +388,7 @@ namespace MDLStructs
 		STRUCT_GETTER(Model, modelsOffset)
 	};
 
-	struct __attribute__((packed)) Header
+	struct Header
 	{
 		static const int32_t SUPPORTED_VERSION = 48;
 
@@ -522,7 +524,7 @@ namespace MDLStructs
 		int32_t unused3;
 	};
 
-	struct __attribute__((packed)) Header2
+	struct Header2
 	{
 		int32_t srcBoneTransformCount;
 		int32_t srcBoneTransformOffset;
@@ -550,5 +552,7 @@ namespace MDLStructs
 		return static_cast<int32_t>(pVertex->origMeshVertId) + vertsOffset + GetModel()->tangentsOffset / sizeof(Vector4D);
 	}
 }
+
+#pragma pack(pop)
 
 #undef STRUCT_GETTER
