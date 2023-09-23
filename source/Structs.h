@@ -6,7 +6,7 @@
 #include <cstdint>
 
 #define STRUCT_GETTER(classname, offset)                                                            \
-inline const classname* Get##classname(const int i) const                                           \
+[[nodiscard]] inline const classname* Get##classname(const int i) const                             \
 {                                                                                                   \
 	return reinterpret_cast<const classname*>(reinterpret_cast<const uint8_t*>(this) + offset) + i; \
 }
@@ -131,7 +131,7 @@ namespace VTXStructs
 
 		int32_t numIndices;
 		int32_t indexOffset;
-		inline const uint16_t* GetIndex(const int i) const
+		[[nodiscard]] inline const uint16_t* GetIndex(const int i) const
 		{
 			return reinterpret_cast<const uint16_t*>(reinterpret_cast<const uint8_t*>(this) + indexOffset) + i;
 		}
@@ -181,7 +181,7 @@ namespace VTXStructs
 	{
 		int16_t materialId;
 		int32_t replacementMaterialNameOffset;
-		inline const char* GetMaterialReplacementName() const
+		[[nodiscard]] inline const char* GetMaterialReplacementName() const
 		{
 			return reinterpret_cast<const char*>(this) + replacementMaterialNameOffset;
 		}
@@ -271,7 +271,7 @@ namespace MDLStructs
 	struct Texture
 	{
 		int32_t szNameIndex;
-		inline const char* GetName() const
+		[[nodiscard]] inline const char* GetName() const
 		{
 			return reinterpret_cast<const char*>(this) + szNameIndex;
 		}
@@ -316,7 +316,7 @@ namespace MDLStructs
 		int32_t material;
 
 		int32_t modelIndex;
-		inline const Model* GetModel() const
+		[[nodiscard]] inline const Model* GetModel() const
 		{
 			return reinterpret_cast<const Model*>(reinterpret_cast<const uint8_t*>(this) + modelIndex);
 		}
@@ -376,7 +376,7 @@ namespace MDLStructs
 	struct BodyPart
 	{
 		int32_t szNameIndex;
-		inline const char* GetName() const
+		[[nodiscard]] inline const char* GetName() const
 		{
 			return reinterpret_cast<const char*>(this) + szNameIndex;
 		}
@@ -433,7 +433,7 @@ namespace MDLStructs
 
 		int32_t textureDirCount;
 		int32_t textureDirOffset;
-		inline const char* GetTextureDirectory(const int i) const
+		[[nodiscard]] inline const char* GetTextureDirectory(const int i) const
 		{
 			return reinterpret_cast<const char*>(this) + *(reinterpret_cast<const int32_t*>(
 				(reinterpret_cast<const uint8_t*>(this) + textureDirOffset)
@@ -443,7 +443,7 @@ namespace MDLStructs
 		int32_t skinRefCount;
 		int32_t skinFamilyCount;
 		int32_t skinRefOffset;
-		inline int16_t GetSkin(const int family, const int material) const
+		[[nodiscard]] inline int16_t GetSkin(const int family, const int material) const
 		{
 			const int16_t* skinTbl = reinterpret_cast<const int16_t*>(reinterpret_cast<const uint8_t*>(this) + skinRefOffset);
 			return skinTbl[family * skinRefCount + material];
@@ -545,11 +545,11 @@ namespace MDLStructs
 
 	inline int32_t Mesh::GetVertexIndex(const VTXStructs::Vertex* pVertex) const
 	{
-		return static_cast<int32_t>(pVertex->origMeshVertId) + vertsOffset + GetModel()->vertsOffset / sizeof(VVDStructs::Vertex);
+		return static_cast<int32_t>(pVertex->origMeshVertId) + vertsOffset + GetModel()->vertsOffset / static_cast<int32_t>(sizeof(VVDStructs::Vertex));
 	}
 	inline int32_t Mesh::GetTangentIndex(const VTXStructs::Vertex* pVertex) const
 	{
-		return static_cast<int32_t>(pVertex->origMeshVertId) + vertsOffset + GetModel()->tangentsOffset / sizeof(Vector4D);
+		return static_cast<int32_t>(pVertex->origMeshVertId) + vertsOffset + GetModel()->tangentsOffset / static_cast<int32_t>(sizeof(Vector4D));
 	}
 }
 
