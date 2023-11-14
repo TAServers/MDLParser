@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 #include "source/Structs.h"
 
 class VVD
