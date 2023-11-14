@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <cstdint>
 #include <new>
 
 using namespace MDLStructs;

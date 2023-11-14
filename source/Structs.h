@@ -3,8 +3,6 @@
 #include "Enums.h"
 #include "FileLimits.h"
 
-#include <cstdint>
-
 #define STRUCT_GETTER(classname, offset)                                                            \
 [[nodiscard]] inline const classname* Get##classname(const int i) const                             \
 {                                                                                                   \

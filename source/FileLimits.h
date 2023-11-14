@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include "Ints.h"
 
 namespace MDLStructs
 {

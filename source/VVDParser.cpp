@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "Ints.h"
+
 using namespace VVDStructs;
 
 constexpr int32_t FILE_ID = 'I' + ('D' << 8) + ('S' << 16) + ('V' << 24);

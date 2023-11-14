@@ -1,7 +1,8 @@
 #include "../MDLParser.h"
 
-#include <cstdlib>
 #include <cstring>
+
+#include "Ints.h"
 
 using namespace VTXStructs;
 
