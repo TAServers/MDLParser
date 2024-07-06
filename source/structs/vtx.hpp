@@ -1,6 +1,6 @@
 #pragma once
 
-#include "source/Enums.h"
+#include "../enums.hpp"
 #include <array>
 #include <cstdint>
 
@@ -25,7 +25,7 @@ namespace MdlParser::Structs::Vtx {
 
     int16_t numBones;
 
-    VTXEnums::StripFlags flags;
+    Enums::Vtx::StripFlags flags;
 
     int32_t numBoneStateChanges;
     int32_t boneStateChangeOffset;
@@ -43,7 +43,7 @@ namespace MdlParser::Structs::Vtx {
     int32_t numStrips;
     int32_t stripOffset;
 
-    VTXEnums::StripGroupFlags flags;
+    Enums::Vtx::StripGroupFlags flags;
 
     // this struct has 2 more ints if the MDL version is >= 49, however sdk 2013 uses version 48 (does gmod backport 49?)
   };
@@ -52,7 +52,7 @@ namespace MdlParser::Structs::Vtx {
     int32_t numStripGroups;
     int32_t stripGroupHeaderOffset;
 
-    VTXEnums::MeshFlags flags;
+    Enums::Vtx::MeshFlags flags;
   };
 
   struct ModelLoD {

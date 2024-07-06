@@ -3,7 +3,7 @@
 #include "common.hpp"
 #include "vtx.hpp"
 #include "../limits.h"
-#include "source/Enums.h"
+#include "source/enums.hpp"
 #include <array>
 #include <cstdint>
 
@@ -80,7 +80,7 @@ namespace MdlParser::Structs::Mdl {
     int32_t vertsOffset;
 
     int32_t flexPair;
-    MDLEnums::VertAnimType vertAnimType;
+    Enums::Mdl::VertAnimType vertAnimType;
 
     std::array<uint8_t, 3> unused0;
     std::array<int32_t, 6> unused1;
@@ -162,7 +162,7 @@ namespace MdlParser::Structs::Mdl {
     Vector viewMin; // Valve dev wiki doesn't know what this is, but likely the render bounds
     Vector viewMax;
 
-    MDLEnums::Flags flags;
+    Enums::Mdl::Flags flags;
 
     int32_t boneCount;
     int32_t boneOffset;
