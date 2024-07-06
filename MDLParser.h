@@ -1,122 +1,81 @@
 #pragma once
 
+#include "source/errors.hpp"
 #include "source/Structs.h"
+#include <optional>
 
-class VVD
-{
+class Vvd {
 private:
-	bool mIsValid = false;
+  std::vector<VVDStructs::Vertex> vertices;
+  std::vector<MDLStructs::Vector4D> tangents;
 
-	int32_t mNumVertices = 0U;
-	VVDStructs::Vertex*   mpVertices = nullptr;
-	MDLStructs::Vector4D* mpTangents = nullptr;
-
-	int32_t mNumLoDs = 0;
-
-	void CopyFrom(const VVD& src);
+  int32_t numLoDs = 0;
 
 public:
-	VVD() = default;
-	VVD(const VVD& src);
-	VVD& operator=(const VVD& src);
+  Vvd(std::vector<std::byte> data, const int32_t checksum);
 
-	VVD(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum);
-	~VVD();
-
-	[[nodiscard]] bool IsValid() const;
-
-	[[nodiscard]] int32_t GetNumVertices() const;
-
-	[[nodiscard]] const VVDStructs::Vertex* GetVertex(const int i) const;
-	[[nodiscard]] const MDLStructs::Vector4D* GetTangent(const int i) const;
-
-	[[nodiscard]] int32_t GetNumLoDs() const;
+  [[nodiscard]] const std::vector<VVDStructs::Vertex>& getVertices() const;
+  [[nodiscard]] const std::vector<MDLStructs::Vector4D>& getTangents() const;
+  [[nodiscard]] int32_t getNumLoDs() const;
 };
 
-class VTX
-{
+class Vtx {
 private:
-	bool mIsValid = false;
-
-	size_t mDataSize = 0U;
-	uint8_t* mpData = nullptr;
-
-	const VTXStructs::Header* mpHeader = nullptr;
-
-	void CopyFrom(const VTX& src);
+  std::vector<std::byte> vtxData;
+  VTXStructs::Header header;
 
 public:
-	VTX() = default;
-	VTX(const VTX& src);
-	VTX& operator=(const VTX& src);
+  Vtx(std::vector<std::byte> data, const int32_t checksum);
 
-	VTX(const uint8_t* pFileData, const size_t dataSize, const int32_t checksum);
-	~VTX();
-
-	[[nodiscard]] bool IsValid() const;
-
-	[[nodiscard]] const VTXStructs::MaterialReplacementList* GetMaterialReplacementList(const int lod) const;
-
-	[[nodiscard]] int32_t GetNumBodyParts() const;
-	[[nodiscard]] const VTXStructs::BodyPart* GetBodyPart(const int i) const;
+  [[nodiscard]] const std::vector<VTXStructs::MaterialReplacement> getMaterialReplacements(const int lod) const;
+  [[nodiscard]] const std::vector<VTXStructs::BodyPart>& getBodyParts() const;
 };
 
-class MDL
-{
+class Mdl {
 private:
-	bool mIsValid = false;
+  Vvd vvd;
+  Vtx vtx;
 
-	VVD mVVD;
-	VTX mVTX;
+  std::vector<std::byte> mdlData;
 
-	size_t mDataSize = 0U;
-	uint8_t* mpData = nullptr;
-
-	const MDLStructs::Header* mpHeader = nullptr;
-
-	bool mHasHeader2 = false;
-	const MDLStructs::Header2* mpHeader2 = nullptr;
-
-	void CopyFrom(const MDL& src);
+  MDLStructs::Header header;
+  std::optional<MDLStructs::Header2> header2;
 
 public:
-	MDL() = default;
-	MDL(const MDL& src);
-	MDL& operator=(const MDL& src);
+  Mdl(std::vector<std::byte> mdlData, std::vector<std::byte> vvdData, std::vector<std::byte> vtxData);
+  ~Mdl() = default;
 
-	// Parses a MDL file from raw data, along with VVD and VTX
-	MDL(
-		const uint8_t* pMDLData, const size_t mdlSize,
-		const uint8_t* pVVDData, const size_t vvdSize,
-		const uint8_t* pVTXData, const size_t vtxSize
-	);
-	~MDL();
+  Mdl(const Mdl&) = delete;
+  Mdl& operator=(const Mdl&) = delete;
 
-	[[nodiscard]] bool IsValid() const;
+  Mdl(Mdl&& other) noexcept :
+    vvd(std::move(other.vvd)), vtx(std::move(other.vtx)), mdlData(std::move(other.mdlData)), header(other.header),
+    header2(other.header2) {}
+  Mdl& operator=(Mdl&& other) noexcept {
+    vvd = std::move(other.vvd);
+    vtx = std::move(other.vtx);
+    mdlData = std::move(other.mdlData);
 
-	[[nodiscard]] int32_t GetChecksum() const;
+    return *this;
+  }
 
-	[[nodiscard]] int32_t GetNumBodyParts() const;
-	void GetBodyPart(
-		const int i,
-		const MDLStructs::BodyPart** pMDLBodyPartOut,
-		const VTXStructs::BodyPart** pVTXBodyPartOut
-	) const;
+  [[nodiscard]] int32_t getChecksum() const;
 
-	[[nodiscard]] int32_t GetNumLoDs() const;
+  [[nodiscard]] int32_t getNumBodyParts() const;
+  void getBodyPart(
+    const int i, const MDLStructs::BodyPart** pMDLBodyPartOut, const VTXStructs::BodyPart** pVTXBodyPartOut
+  ) const;
 
-	[[nodiscard]] int32_t GetNumVertices() const;
-	[[nodiscard]] const VVDStructs::Vertex* GetVertex(const int i) const;
-	[[nodiscard]] const MDLStructs::Vector4D* GetTangent(const int i) const;
+  [[nodiscard]] int32_t getNumLoDs() const;
+  [[nodiscard]] const std::vector<VVDStructs::Vertex>& getVertices() const;
+  [[nodiscard]] const std::vector<MDLStructs::Vector4D>& getTangents() const;
 
-	[[nodiscard]] int32_t GetNumMaterials() const;
-	[[nodiscard]] int32_t GetNumSkinFamilies() const;
-	[[nodiscard]] int16_t GetMaterialIdx(const int skin, int materialId) const;
-	[[nodiscard]] const char* GetMaterialName(const int i) const;
+  [[nodiscard]] int32_t getNumMaterials() const;
+  [[nodiscard]] int32_t getNumSkinFamilies() const;
+  [[nodiscard]] int16_t getMaterialIdx(const int skin, int materialId) const;
+  [[nodiscard]] const char* getMaterialName(const int i) const;
 
-	[[nodiscard]] int32_t GetNumMaterialDirectories() const;
-	[[nodiscard]] const char* GetMaterialDirectory(const int i) const;
+  [[nodiscard]] const std::vector<std::string>& getMaterialDirectories() const;
 
-	[[nodiscard]] int32_t GetNumBones() const;
-	[[nodiscard]] const MDLStructs::Bone* GetBone(const int i) const;
+  [[nodiscard]] const std::vector<MDLStructs::Bone>& getBones() const;
 };
