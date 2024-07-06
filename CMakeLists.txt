@@ -6,16 +6,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(MDLParser
         source/MDLParser.cpp
-        source/VVDParser.cpp
+        source/vvd.cpp
         source/VTXParser.cpp
         source/enums.hpp
         source/errors.hpp
-        source/limits.h
+        source/limits.hpp
         source/helpers/parse-struct.hpp
         source/structs/common.hpp
         source/structs/vvd.hpp
         source/structs/vtx.hpp
         source/structs/mdl.hpp
+        source/vvd.hpp
 )
 
 target_include_directories(
