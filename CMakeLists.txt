@@ -1,17 +1,24 @@
-cmake_minimum_required (VERSION 3.20)
+cmake_minimum_required(VERSION 3.20)
 
 project("MDLParser" CXX)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(
-	${PROJECT_NAME}
-	"source/MDLParser.cpp"
-	"source/VVDParser.cpp"
-	"source/VTXParser.cpp"
+add_library(MDLParser
+        source/MDLParser.cpp
+        source/VVDParser.cpp
+        source/VTXParser.cpp
+        source/enums.hpp
+        source/errors.hpp
+        source/limits.h
+        source/helpers/parse-struct.hpp
+        source/structs/common.hpp
+        source/structs/vvd.hpp
+        source/structs/vtx.hpp
+        source/structs/mdl.hpp
 )
 
 target_include_directories(
-	${PROJECT_NAME} PRIVATE
-	"source"
+        MDLParser PRIVATE
+        "source"
 )
