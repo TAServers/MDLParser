@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 #include "vtx.hpp"
-#include "../limits.h"
+#include "../limits.hpp"
 #include "source/enums.hpp"
 #include <array>
 #include <cstdint>

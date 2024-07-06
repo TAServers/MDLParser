@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "../limits.h"
+#include "../limits.hpp"
 
 namespace MdlParser::Structs::Vvd {
   using Limits::MAX_NUM_LODS;
