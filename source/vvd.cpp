@@ -11,7 +11,7 @@ namespace MdlParser {
     constexpr int32_t FILE_ID = u'I' + (u'D' << 8u) + (u'S' << 16u) + (u'V' << 24u);
   }
 
-  Vvd::Vvd(std::vector<std::byte>& data, const int32_t checksum) {
+  Vvd::Vvd(const std::vector<std::byte>& data, const int32_t checksum) {
     const int32_t rootLod = 0;
 
     const auto header = parseStruct<Header>(data, 0, "Failed to parse VVD header");

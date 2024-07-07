@@ -12,7 +12,7 @@ namespace MdlParser {
     int32_t numLods = 0;
 
   public:
-    Vvd(std::vector<std::byte>& data, const int32_t checksum);
+    Vvd(const std::vector<std::byte>& data, const int32_t checksum);
 
     [[nodiscard]] const std::vector<Structs::Vvd::Vertex>& getVertices() const;
     [[nodiscard]] const std::vector<Structs::Vector4D>& getTangents() const;
