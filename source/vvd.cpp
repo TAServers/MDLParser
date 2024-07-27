@@ -29,7 +29,7 @@ namespace MdlParser {
     const auto numVertices = header.numLoDVertices[rootLod];
     if (sizeof(Header) + sizeof(Fixup) * header.numFixups + (sizeof(Vector4D) + sizeof(Vertex)) * numVertices >
         data.size()) {
-      throw InvalidDataSize("Size of VVD with given number of vertices exceeds data size");
+      throw InvalidBody("Size of VVD with given number of vertices exceeds data size");
     }
 
     numLods = header.numLoDs;
@@ -54,9 +54,7 @@ namespace MdlParser {
           continue;
         }
 
-        if (fixup.sourceVertexId + fixup.numVertices > numVertices) {
-          throw OutOfBoundsAccess("VVD fixup accesses outside vertex data");
-        }
+        checkBounds(fixup.sourceVertexId, fixup.numVertices, numVertices, "VVD fixup accesses outside vertex data");
 
         vertices.insert(
           vertices.end(),

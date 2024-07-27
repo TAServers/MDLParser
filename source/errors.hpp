@@ -12,7 +12,7 @@
 namespace MdlParser::Errors {
   enum class Reason : uint8_t {
     InvalidHeader,
-    InvalidDataSize,
+    InvalidBody,
     InvalidChecksum,
     UnsupportedVersion,
     OutOfBoundsAccess,
@@ -31,7 +31,7 @@ namespace MdlParser::Errors {
   };
 
   ERROR_FOR_REASON(InvalidHeader);
-  ERROR_FOR_REASON(InvalidDataSize);
+  ERROR_FOR_REASON(InvalidBody);
   ERROR_FOR_REASON(InvalidChecksum);
   ERROR_FOR_REASON(UnsupportedVersion);
   ERROR_FOR_REASON(OutOfBoundsAccess);
