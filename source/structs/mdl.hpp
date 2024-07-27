@@ -1,9 +1,8 @@
 #pragma once
 
 #include "common.hpp"
-#include "vtx.hpp"
+#include "../enums.hpp"
 #include "../limits.hpp"
-#include "source/enums.hpp"
 #include <array>
 #include <cstdint>
 
@@ -13,7 +12,7 @@ namespace MdlParser::Structs::Mdl {
 #pragma pack(push, 1)
 
   // These are not used and are only here for alignment
-  // Pointers have been replaced with int32 to mimic a 32 bit system
+  // Pointers have been replaced with int32 to mimic a 32-bit system
   struct mstudio_modelvertexdata_t {
     int32_t pVertexData;
     int32_t pTangentData;
@@ -56,6 +55,7 @@ namespace MdlParser::Structs::Mdl {
   struct Texture {
     int32_t szNameIndex;
 
+    // TODO: Determine matching enum for these
     int32_t flags;
 
     int32_t used; // ?????
@@ -86,7 +86,6 @@ namespace MdlParser::Structs::Mdl {
     std::array<int32_t, 6> unused1;
   };
 
-  struct Model;
   struct Mesh {
     int32_t material;
 
@@ -146,7 +145,7 @@ namespace MdlParser::Structs::Mdl {
   };
 
   struct Header {
-    static const int32_t SUPPORTED_VERSION = 48;
+    static const int32_t MAX_SUPPORTED_VERSION = 48;
 
     int32_t id; // Model format ID (IDST)
     int32_t version;

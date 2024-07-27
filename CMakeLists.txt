@@ -5,7 +5,6 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(MDLParser
-        source/MDLParser.cpp
         source/vvd.cpp
         source/vtx.cpp
         source/enums.hpp
@@ -20,6 +19,8 @@ add_library(MDLParser
         source/helpers/check-bounds.hpp
         source/helpers/offset-data-view.cpp
         source/helpers/offset-data-view.hpp
+        source/mdl.cpp
+        source/mdl.hpp
 )
 
 target_include_directories(
