@@ -7,9 +7,11 @@
 namespace MdlParser {
   class OffsetDataView {
   public:
+    template <typename T> using ValueOffsetPair = std::pair<T, size_t>;
+
     explicit OffsetDataView(const std::weak_ptr<std::vector<std::byte>>& data);
 
-    OffsetDataView(const OffsetDataView& from, const size_t offset);
+    explicit OffsetDataView(const OffsetDataView& from, const size_t newOffset);
 
     ~OffsetDataView() = default;
     OffsetDataView(const OffsetDataView&) = delete;
@@ -17,16 +19,38 @@ namespace MdlParser {
     OffsetDataView(const OffsetDataView&&) = delete;
     OffsetDataView& operator=(const OffsetDataView&&) = delete;
 
-    template <typename T> [[nodiscard]] T parseStruct(const size_t relativeOffset, const char* errorMessage) const {
+    [[nodiscard]] OffsetDataView withOffset(const size_t newOffset) const;
+
+    template <typename T>
+    [[nodiscard]] ValueOffsetPair<T> parseStruct(const size_t relativeOffset, const char* errorMessage) const {
       const auto lockedData = getLockedData();
       const auto absoluteOffset = offset + relativeOffset;
       checkBounds(absoluteOffset, sizeof(T), lockedData->size(), errorMessage);
 
-      return *reinterpret_cast<const T*>(&lockedData->at(offset));
+      return std::make_pair(*reinterpret_cast<const T*>(&lockedData->at(offset)), absoluteOffset);
     }
 
     template <typename T>
-    [[nodiscard]] std::vector<T> parseStructArray(
+    [[nodiscard]] std::vector<ValueOffsetPair<T>> parseStructArray(
+      const size_t relativeOffset, const size_t count, const char* errorMessage
+    ) const {
+      const auto lockedData = getLockedData();
+      const auto absoluteOffset = offset + relativeOffset;
+      checkBounds(absoluteOffset, sizeof(T) * count, lockedData->size(), errorMessage);
+
+      std::vector<ValueOffsetPair<T>> parsed;
+      parsed.reserve(count);
+
+      for (size_t i = 0; i < count; i++) {
+        const auto currentOffset = absoluteOffset + sizeof(T) * i;
+        parsed.emplace_back(*reinterpret_cast<const T*>(&lockedData->at(offset)), currentOffset);
+      }
+
+      return std::move(parsed);
+    }
+
+    template <typename T>
+    [[nodiscard]] std::vector<T> parseStructArrayWithoutOffsets(
       const size_t relativeOffset, const size_t count, const char* errorMessage
     ) const {
       const auto lockedData = getLockedData();

@@ -3,8 +3,12 @@
 namespace MdlParser {
   OffsetDataView::OffsetDataView(const std::weak_ptr<std::vector<std::byte>>& data) : data(data), offset(0) {}
 
-  OffsetDataView::OffsetDataView(const MdlParser::OffsetDataView& from, const size_t offset) :
-    data(from.data), offset(from.offset + offset) {}
+  OffsetDataView::OffsetDataView(const OffsetDataView& from, const size_t newOffset) :
+    data(from.data), offset(newOffset) {}
+
+  OffsetDataView OffsetDataView::withOffset(const size_t newOffset) const {
+    return OffsetDataView(*this, newOffset);
+  }
 
   std::string OffsetDataView::parseString(const size_t relativeOffset, const char* errorMessage) const {
     const auto lockedData = getLockedData();

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(MDLParser
         source/MDLParser.cpp
         source/vvd.cpp
-        source/VTXParser.cpp
+        source/vtx.cpp
         source/enums.hpp
         source/errors.hpp
         source/limits.hpp
@@ -17,6 +17,12 @@ add_library(MDLParser
         source/structs/vtx.hpp
         source/structs/mdl.hpp
         source/vvd.hpp
+        source/vtx.hpp
+        source/helpers/check-bounds.hpp
+        source/helpers/parse-string.hpp
+        source/helpers/parse-string.cpp
+        source/helpers/offset-data-view.cpp
+        source/helpers/offset-data-view.hpp
 )
 
 target_include_directories(
