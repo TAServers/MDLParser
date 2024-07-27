@@ -105,9 +105,9 @@ namespace MdlParser {
      * @endcode
      * @return Skin lookup table as a 2D array
      */
-    [[nodiscard]] const std::vector<std::vector<size_t>> getSkinLookupTable() const;
+    [[nodiscard]] const std::vector<std::vector<int16_t>>& getSkinLookupTable() const;
 
-    [[nodiscard]] const std::vector<Bone> getBones() const;
+    [[nodiscard]] const std::vector<Bone>& getBones() const;
 
   private:
     Structs::Mdl::Header header;
@@ -117,7 +117,7 @@ namespace MdlParser {
 
     std::vector<std::string> textureDirectories;
     std::vector<Texture> textures;
-    std::vector<std::vector<size_t>> skins;
+    std::vector<std::vector<int16_t>> skins;
 
     std::vector<Bone> bones;
   };
