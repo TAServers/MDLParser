@@ -50,7 +50,7 @@ namespace MdlParser {
       std::string replacementName;
     };
 
-    Vtx(const std::shared_ptr<std::vector<std::byte>>& data, const int32_t checksum);
+    Vtx(const std::weak_ptr<std::vector<std::byte>>& data, const int32_t checksum);
 
     [[nodiscard]] const std::vector<MaterialReplacement>& getMaterialReplacements(const int lod) const;
     [[nodiscard]] const std::vector<BodyPart>& getBodyParts() const;

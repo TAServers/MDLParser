@@ -1,12 +1,8 @@
 #include "vtx.hpp"
 #include "errors.hpp"
 #include "helpers/offset-data-view.hpp"
-#include "helpers/parse-string.hpp"
-#include "helpers/parse-struct.hpp"
 #include "structs/vtx.hpp"
 #include <cstdint>
-#include <cstdlib>
-#include <cstring>
 
 namespace MdlParser {
   using Structs::Vtx::Header;
@@ -113,7 +109,7 @@ namespace MdlParser {
     }
   }
 
-  Vtx::Vtx(const std::shared_ptr<std::vector<std::byte>>& data, const int32_t checksum) {
+  Vtx::Vtx(const std::weak_ptr<std::vector<std::byte>>& data, const int32_t checksum) {
     const OffsetDataView dataView(data);
     header = dataView.parseStruct<Header>(0, "Failed to parse VTX header").first;
 

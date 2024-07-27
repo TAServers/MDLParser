@@ -11,7 +11,6 @@ add_library(MDLParser
         source/enums.hpp
         source/errors.hpp
         source/limits.hpp
-        source/helpers/parse-struct.hpp
         source/structs/common.hpp
         source/structs/vvd.hpp
         source/structs/vtx.hpp
@@ -19,8 +18,6 @@ add_library(MDLParser
         source/vvd.hpp
         source/vtx.hpp
         source/helpers/check-bounds.hpp
-        source/helpers/parse-string.hpp
-        source/helpers/parse-string.cpp
         source/helpers/offset-data-view.cpp
         source/helpers/offset-data-view.hpp
 )

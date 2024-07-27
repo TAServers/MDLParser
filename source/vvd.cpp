@@ -1,6 +1,7 @@
 #include "vvd.hpp"
-#include "helpers/parse-struct.hpp"
+#include "helpers/offset-data-view.hpp"
 #include <cstdint>
+#include <memory>
 
 namespace MdlParser {
   using Structs::Vector4D;
@@ -11,10 +12,11 @@ namespace MdlParser {
     constexpr int32_t FILE_ID = u'I' + (u'D' << 8u) + (u'S' << 16u) + (u'V' << 24u);
   }
 
-  Vvd::Vvd(const std::vector<std::byte>& data, const int32_t checksum) {
+  Vvd::Vvd(const std::weak_ptr<std::vector<std::byte>>& data, const int32_t checksum) {
+    const OffsetDataView dataView(data);
     const int32_t rootLod = 0;
 
-    const auto header = parseStruct<Header>(data, 0, "Failed to parse VVD header");
+    const auto header = dataView.parseStruct<Header>(0, "Failed to parse VVD header").first;
 
     if (header.id != FILE_ID) {
       throw InvalidHeader("VVD header ID does not match IDSV");
@@ -28,23 +30,29 @@ namespace MdlParser {
 
     const auto numVertices = header.numLoDVertices[rootLod];
     if (sizeof(Header) + sizeof(Fixup) * header.numFixups + (sizeof(Vector4D) + sizeof(Vertex)) * numVertices >
-        data.size()) {
+        data.lock()->size()) {
       throw InvalidBody("Size of VVD with given number of vertices exceeds data size");
     }
 
     numLods = header.numLoDs;
 
     if (header.numFixups == 0) {
-      vertices = parseStructArray<Vertex>(data, header.vertexDataOffset, numVertices, "Failed to parse VVD vertices");
-      tangents =
-        parseStructArray<Vector4D>(data, header.tangentDataOffset, numVertices, "Failed to parse VVD tangents");
+      vertices = dataView.parseStructArrayWithoutOffsets<Vertex>(
+        header.vertexDataOffset, numVertices, "Failed to parse VVD vertices"
+      );
+      tangents = dataView.parseStructArrayWithoutOffsets<Vector4D>(
+        header.tangentDataOffset, numVertices, "Failed to parse VVD tangents"
+      );
     } else {
-      const auto fixups =
-        parseStructArray<Fixup>(data, header.fixupTableOffset, header.numFixups, "Failed to parse VVD fixups");
-      const auto originalVertices =
-        parseStructArray<Vertex>(data, header.vertexDataOffset, numVertices, "Failed to parse VVD vertices");
-      const auto originalTangents =
-        parseStructArray<Vector4D>(data, header.tangentDataOffset, numVertices, "Failed to parse VVD tangents");
+      const auto fixups = dataView.parseStructArrayWithoutOffsets<Fixup>(
+        header.fixupTableOffset, header.numFixups, "Failed to parse VVD fixups"
+      );
+      const auto originalVertices = dataView.parseStructArrayWithoutOffsets<Vertex>(
+        header.vertexDataOffset, numVertices, "Failed to parse VVD vertices"
+      );
+      const auto originalTangents = dataView.parseStructArrayWithoutOffsets<Vector4D>(
+        header.tangentDataOffset, numVertices, "Failed to parse VVD tangents"
+      );
 
       vertices.reserve(numVertices);
       tangents.reserve(numVertices);
