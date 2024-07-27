@@ -1,0 +1,29 @@
+#include "offset-data-view.hpp"
+
+namespace MdlParser {
+  OffsetDataView::OffsetDataView(const std::weak_ptr<std::vector<std::byte>>& data) : data(data), offset(0) {}
+
+  OffsetDataView::OffsetDataView(const MdlParser::OffsetDataView& from, const size_t offset) :
+    data(from.data), offset(from.offset + offset) {}
+
+  std::string OffsetDataView::parseString(const size_t relativeOffset, const char* errorMessage) const {
+    const auto lockedData = getLockedData();
+    const auto absoluteOffset = offset + relativeOffset;
+
+    for (size_t i = absoluteOffset; i < lockedData->size(); i++) {
+      if (lockedData->at(i) == std::byte(0)) {
+        return reinterpret_cast<const char*>(&lockedData->at(offset));
+      }
+    }
+
+    throw OutOfBoundsAccess(errorMessage);
+  }
+
+  std::shared_ptr<std::vector<std::byte>> OffsetDataView::getLockedData() const {
+    if (data.expired()) {
+      throw std::runtime_error("Attempted to lock an expired weak_ptr to underlying data");
+    }
+
+    return data.lock();
+  }
+}
