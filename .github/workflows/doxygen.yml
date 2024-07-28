@@ -5,19 +5,21 @@ on:
 
 jobs:
   build:
-    - name: Checkout
-      uses: actions/checkout@v4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Build documentation
-      run: doxygen
+      - name: Build documentation
+        run: doxygen
 
-    - name: Upload artefact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: docs/html
+      - name: Upload artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/html
 
   deploy:
-    needs: site
+    needs: build
 
     permissions:
       pages: write
