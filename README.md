@@ -19,7 +19,7 @@ or specialised parser, or to easily extend - and hopefully PR - the `MdlParser::
 The following minimal example shows how you can easily and safely traverse the interconnected structure of the three
 files using the accessor helpers:
 
-```c++
+```cpp
 #include "MDLParser.hpp"
 
 // Load from a file on disk, an API, or somewhere in memory
@@ -38,36 +38,44 @@ const MdlParser::Vvd vvd(vvdData, mdl.getChecksum());
 // const Vvd vvd(vvdData);
 
 // For each body part (body group) pair...
-MdlParser::Accessors::iterateBodyParts(mdl, vtx, [&](const auto& mdlBodyPart, const auto& vtxBodyPart) {
-  // For each model pair...
-  MdlParser::Accessors::iterateModels(mdlBodyPart, vtxBodyPart, [&](const auto& mdlModel, const auto& vtxModel) {
-    // Only using the highest LoD here
-    const auto& vtxLod = vtxModel.levelOfDetails[0];
+MdlParser::Accessors::iterateBodyParts(
+  mdl,
+  vtx,
+  [&](const MdlParser::Mdl::BodyPart& mdlBodyPart, const MdlParser::Vtx::BodyPart& vtxBodyPart) {
+    // For each model pair...
+    MdlParser::Accessors::iterateModels(
+      mdlBodyPart,
+      vtxBodyPart,
+      [&](const MdlParser::Mdl::Model& mdlModel, const MdlParser::Vtx::Model& vtxModel) {
+        // Only using the highest LoD here
+        const MdlParser::Vtx::ModelLod& vtxLod = vtxModel.levelOfDetails[0];
 
-    // For each mesh pair...
-    MdlParser::Accessors::iterateMeshes(
-      mdlModel,
-      vtxLod,
-      [&](const auto& mdlMesh, const MdlParser::Vtx::Mesh& vtxMesh) {
-        // For each strip group...
-        for (const auto& stripGroup : vtxMesh.stripGroups) {
-          // For each vertex...
-          MdlParser::Accessors::iterateVertices(
-            vvd,
-            mdlModel,
-            mdlMesh,
-            stripGroup,
-            [&vertices](
-              const MdlParser::Structs::Vtx::Vertex&,
-              const MdlParser::Structs::Vvd::Vertex& vvdVertex,
-              const MdlParser::Structs::Vector4D& tangent
-            ) {
-              // ...
+        // For each mesh pair...
+        MdlParser::Accessors::iterateMeshes(
+          mdlModel,
+          vtxLod,
+          [&](const MdlParser::Mdl::Mesh& mdlMesh, const MdlParser::Vtx::Mesh& vtxMesh) {
+            // For each strip group...
+            for (const MdlParser::Vtx::StripGroup& stripGroup : vtxMesh.stripGroups) {
+              // For each vertex...
+              MdlParser::Accessors::iterateVertices(
+                vvd,
+                mdlModel,
+                mdlMesh,
+                stripGroup,
+                [&](
+                  const MdlParser::Structs::Vtx::Vertex&,
+                  const MdlParser::Structs::Vvd::Vertex& vvdVertex,
+                  const MdlParser::Structs::Vector4D& tangent
+                ) {
+                  // ...
+                }
+              );
             }
-          );
-        }
+          }
+        );
       }
     );
-  });
-});
+  }
+);
 ```
