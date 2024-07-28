@@ -9,7 +9,7 @@
 
 namespace MdlParser {
   /**
-   * Parses a .mdl file from a buffer into an easier to travers structure using STL containers.
+   * Parses a .mdl file from a buffer into an easier to traverse structure using STL containers.
    */
   class Mdl {
   public:
@@ -38,7 +38,7 @@ namespace MdlParser {
     };
 
     /**
-     * A logical grouping of meshes within the model as a whole.
+     * A logical grouping of meshes that can be toggled between in a body part.
      */
     struct Model {
       /**
@@ -153,6 +153,12 @@ namespace MdlParser {
      * @return List of paths relative to /materials.
      */
     [[nodiscard]] const std::vector<std::string>& getTextureDirectories() const;
+
+    /**
+     * Gets the list of textures used by this model.
+     * As each texture only stores its filename, you must use getTextureDirectories() to determine the actual path.
+     * @return List of textures.
+     */
     [[nodiscard]] const std::vector<Texture>& getTextures() const;
 
     /**
