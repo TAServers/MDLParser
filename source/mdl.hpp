@@ -24,6 +24,11 @@ namespace MdlParser {
        * @remark Unlike Model, each Mesh has only one offset for both vertices and tangents.
        */
       int32_t vertexOffset;
+
+      /**
+       * Number of vertices and tangents in this mesh.
+       */
+      int32_t vertexCount;
     };
 
     struct Model {
@@ -33,10 +38,16 @@ namespace MdlParser {
        * Offset into the VVD's vertex array.
        */
       int32_t vertexOffset;
+
       /**
        * Offset into the VVD's tangent array.
        */
       int32_t tangentsOffset;
+
+      /**
+       * Number of vertices and tangents in this model.
+       */
+      int32_t vertexCount;
     };
 
     /**
