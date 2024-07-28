@@ -1,8 +1,10 @@
 # MDLParser
 
-See also: https://github.com/Derpius/BSPParser and https://github.com/Derpius/VTFParser.
-
 Simple and modern library for parsing the Valve model format.
+
+Documentation: https://taservers.github.io/MDLParser/
+
+See also: https://github.com/Derpius/BSPParser and https://github.com/Derpius/VTFParser.
 
 ## What's included
 
