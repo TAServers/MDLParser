@@ -27,7 +27,7 @@ namespace MdlParser {
       const auto absoluteOffset = offset + relativeOffset;
       checkBounds(absoluteOffset, sizeof(T), lockedData->size(), errorMessage);
 
-      return std::make_pair(*reinterpret_cast<const T*>(&lockedData->at(offset)), absoluteOffset);
+      return std::make_pair(*reinterpret_cast<const T*>(&lockedData->at(absoluteOffset)), absoluteOffset);
     }
 
     template <typename T>
@@ -43,7 +43,7 @@ namespace MdlParser {
 
       for (size_t i = 0; i < count; i++) {
         const auto currentOffset = absoluteOffset + sizeof(T) * i;
-        parsed.emplace_back(*reinterpret_cast<const T*>(&lockedData->at(offset)), currentOffset);
+        parsed.emplace_back(*reinterpret_cast<const T*>(&lockedData->at(currentOffset)), currentOffset);
       }
 
       return std::move(parsed);
@@ -57,7 +57,7 @@ namespace MdlParser {
       const auto absoluteOffset = offset + relativeOffset;
       checkBounds(absoluteOffset, sizeof(T) * count, lockedData->size(), errorMessage);
 
-      const T* first = reinterpret_cast<const T*>(&lockedData->at(offset));
+      const T* first = reinterpret_cast<const T*>(&lockedData->at(absoluteOffset));
       return std::vector<T>(first, first + count);
     }
 
