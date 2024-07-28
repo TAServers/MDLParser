@@ -3,6 +3,7 @@
 #include "helpers/offset-data-view.hpp"
 #include "structs/vtx.hpp"
 #include <cstdint>
+#include <optional>
 
 namespace MdlParser {
   using Structs::Vtx::Header;
@@ -109,15 +110,15 @@ namespace MdlParser {
     }
   }
 
-  Vtx::Vtx(const std::weak_ptr<std::vector<std::byte>>& data, const int32_t checksum) {
+  Vtx::Vtx(const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum) {
     const OffsetDataView dataView(data);
     header = dataView.parseStruct<Header>(0, "Failed to parse VTX header").first;
 
     if (header.version != Header::SUPPORTED_VERSION) {
       throw UnsupportedVersion("VTX version is unsupported");
     }
-    if (header.checksum != checksum) {
-      throw InvalidChecksum("VTX checksum does not match MDL's");
+    if (checksum.has_value() && header.checksum != checksum.value()) {
+      throw InvalidChecksum("VTX checksum does not match");
     }
 
     bodyParts.reserve(header.numBodyParts);
@@ -151,6 +152,9 @@ namespace MdlParser {
 
       materialReplacementsByLod.push_back(std::move(replacements));
     }
+  }
+  int32_t Vtx::getChecksum() const {
+    return header.checksum;
   }
 
   const std::vector<Vtx::MaterialReplacement>& Vtx::getMaterialReplacements(const int lod) const {

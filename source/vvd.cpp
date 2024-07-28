@@ -2,6 +2,7 @@
 #include "helpers/offset-data-view.hpp"
 #include <cstdint>
 #include <memory>
+#include <optional>
 
 namespace MdlParser {
   using Structs::Vector4D;
@@ -12,11 +13,11 @@ namespace MdlParser {
     constexpr int32_t FILE_ID = u'I' + (u'D' << 8u) + (u'S' << 16u) + (u'V' << 24u);
   }
 
-  Vvd::Vvd(const std::weak_ptr<std::vector<std::byte>>& data, const int32_t checksum) {
+  Vvd::Vvd(const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum) {
     const OffsetDataView dataView(data);
     const int32_t rootLod = 0;
 
-    const auto header = dataView.parseStruct<Header>(0, "Failed to parse VVD header").first;
+    header = dataView.parseStruct<Header>(0, "Failed to parse VVD header").first;
 
     if (header.id != FILE_ID) {
       throw InvalidHeader("VVD header ID does not match IDSV");
@@ -24,8 +25,8 @@ namespace MdlParser {
     if (header.version != Header::SUPPORTED_VERSION) {
       throw UnsupportedVersion("VVD version is unsupported");
     }
-    if (header.checksum != checksum) {
-      throw InvalidChecksum("VVD checksum does not match MDL's");
+    if (checksum.has_value() && header.checksum != checksum.value()) {
+      throw InvalidChecksum("VVD checksum does not match");
     }
 
     const auto numVertices = header.numLoDVertices[rootLod];
@@ -77,6 +78,10 @@ namespace MdlParser {
         );
       }
     }
+  }
+
+  int32_t Vvd::getChecksum() const {
+    return header.checksum;
   }
 
   const std::vector<Vertex>& Vvd::getVertices() const {

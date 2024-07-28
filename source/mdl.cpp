@@ -112,16 +112,18 @@ namespace MdlParser {
     }
   }
 
-  Mdl::Mdl(const std::weak_ptr<std::vector<std::byte>>& data) {
+  Mdl::Mdl(const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum) {
     const OffsetDataView dataView(data);
     header = dataView.parseStruct<Header>(0, "Failed to parse MDL header").first;
 
     if (header.id != FILE_ID) {
       throw Errors::InvalidHeader("MDL header file ID does not match packed IDST");
     }
-
     if (header.version > Header::MAX_SUPPORTED_VERSION) {
       throw Errors::InvalidHeader("MDL version is unsupported (greater than 48)");
+    }
+    if (checksum.has_value() && header.checksum != checksum.value()) {
+      throw InvalidChecksum("MDL checksum does not match");
     }
 
     header2 = header.header2Offset >= sizeof(Header)

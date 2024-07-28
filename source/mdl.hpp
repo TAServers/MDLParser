@@ -82,6 +82,10 @@ namespace MdlParser {
     };
 
     struct Texture {
+      /**
+       * The filename of the VTF file only.
+       * To determine the actual path to the texture, you must iterate through the texture directories returned by getTextureDirectories().
+       */
       std::string name;
       int32_t flags;
     };
@@ -91,9 +95,17 @@ namespace MdlParser {
      * No ownership of the data is taken as all contents are copied into new structs.
      *
      * @param data
+     * @param checksum Optional checksum to validate against the header's
      */
-    explicit Mdl(const std::weak_ptr<std::vector<std::byte>>& data);
+    explicit Mdl(
+      const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum = std::nullopt
+    );
 
+    /**
+     * Gets the checksum shared by the MDL, VTX and VVD from the header.
+     * @remarks Can be used to loosely verify that a collection of MDL, VTX and VVD files were compiled from the same asset.
+     * @return int32_t checksum
+     */
     [[nodiscard]] int32_t getChecksum() const;
 
     [[nodiscard]] const std::vector<BodyPart>& getBodyParts() const;
