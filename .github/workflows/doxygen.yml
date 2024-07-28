@@ -2,6 +2,7 @@ name: Doxygen
 run-name: "Build and deploy documentation"
 on:
   push:
+    branches: [ master ]
 
 jobs:
   build:
