@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project("MDLParser" CXX)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 add_library(MDLParser
         source/vvd.cpp
