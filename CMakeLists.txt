@@ -21,6 +21,8 @@ add_library(MDLParser
         source/helpers/offset-data-view.hpp
         source/mdl.cpp
         source/mdl.hpp
+        source/accessors.hpp
+        source/accessors.cpp
 )
 
 target_include_directories(
