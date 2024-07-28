@@ -36,7 +36,7 @@ namespace MdlParser {
           "VTX strip accesses outside strip group index data"
         );
 
-        strips.emplace_back(parseStrip(strip));
+        strips.push_back(parseStrip(strip));
       }
 
       return {
@@ -58,7 +58,7 @@ namespace MdlParser {
       for (const auto& [stripGroup, offset] : data.parseStructArray<Structs::Vtx::StripGroup>(
              mesh.stripGroupHeaderOffset, mesh.numStripGroups, "Failed to parse VTX strip group array"
            )) {
-        stripGroups.emplace_back(parseStripGroup(data.withOffset(offset), stripGroup));
+        stripGroups.push_back(parseStripGroup(data.withOffset(offset), stripGroup));
       }
 
       return {.stripGroups = stripGroups, .flags = mesh.flags};
@@ -70,7 +70,7 @@ namespace MdlParser {
 
       for (const auto& [mesh, offset] :
            data.parseStructArray<Structs::Vtx::Mesh>(lod.meshOffset, lod.numMeshes, "Failed to parse VTX mesh array")) {
-        meshes.emplace_back(parseMesh(data.withOffset(offset), mesh));
+        meshes.push_back(parseMesh(data.withOffset(offset), mesh));
       }
 
       return {.meshes = std::move(meshes), .switchPoint = lod.switchPoint};
@@ -83,7 +83,7 @@ namespace MdlParser {
       for (const auto& [lod, offset] : data.parseStructArray<Structs::Vtx::ModelLoD>(
              model.lodOffset, model.numLoDs, "Failed to parse VTX model LoD array"
            )) {
-        lods.emplace_back(parseModelLod(data.withOffset(offset), lod));
+        lods.push_back(parseModelLod(data.withOffset(offset), lod));
       }
 
       return {.levelOfDetails = std::move(lods)};
@@ -102,7 +102,7 @@ namespace MdlParser {
           throw InvalidBody("VTX model LoD count does not match header");
         }
 
-        models.emplace_back(parseModel(data.withOffset(offset), model));
+        models.push_back(parseModel(data.withOffset(offset), model));
       }
 
       return {.models = std::move(models)};
@@ -124,7 +124,7 @@ namespace MdlParser {
     for (const auto& [bodyPart, offset] : dataView.parseStructArray<Structs::Vtx::BodyPart>(
            header.bodyPartOffset, header.numBodyParts, "Failed to parse VTX body part array"
          )) {
-      bodyParts.emplace_back(parseBodyPart(dataView.withOffset(offset), bodyPart, header.numLoDs));
+      bodyParts.push_back(parseBodyPart(dataView.withOffset(offset), bodyPart, header.numLoDs));
     }
 
     materialReplacementsByLod.reserve(header.numLoDs);
@@ -149,7 +149,7 @@ namespace MdlParser {
         });
       }
 
-      materialReplacementsByLod.emplace_back(std::move(replacements));
+      materialReplacementsByLod.push_back(std::move(replacements));
     }
   }
 

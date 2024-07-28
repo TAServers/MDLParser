@@ -24,7 +24,7 @@ namespace MdlParser {
       for (const auto& mesh : data.parseStructArrayWithoutOffsets<Structs::Mdl::Mesh>(
              model.meshesOffset, model.meshesCount, "Failed to parse MDL mesh array"
            )) {
-        meshes.emplace_back(parseMesh(mesh));
+        meshes.push_back(parseMesh(mesh));
       }
 
       return {
@@ -42,7 +42,7 @@ namespace MdlParser {
       for (const auto& [model, offset] : data.parseStructArray<Structs::Mdl::Model>(
              bodyPart.modelsOffset, bodyPart.modelsCount, "Failed to parse MDL model array"
            )) {
-        models.emplace_back(parseModel(data.withOffset(offset), model));
+        models.push_back(parseModel(data.withOffset(offset), model));
       }
 
       return {
@@ -58,9 +58,7 @@ namespace MdlParser {
       for (const auto textureDirectoryOffset : data.parseStructArrayWithoutOffsets<int32_t>(
              header.textureDirOffset, header.textureDirCount, "Failed to parse MDL texture directory list"
            )) {
-        textureDirectories.emplace_back(
-          data.parseString(textureDirectoryOffset, "Failed to parse MDL texture directory")
-        );
+        textureDirectories.push_back(data.parseString(textureDirectoryOffset, "Failed to parse MDL texture directory"));
       }
 
       return std::move(textureDirectories);
@@ -134,7 +132,7 @@ namespace MdlParser {
     for (const auto& [bodyPart, offset] : dataView.parseStructArray<Structs::Mdl::BodyPart>(
            header.bodypartOffset, header.bodypartCount, "Failed to parse MDL body part array"
          )) {
-      bodyParts.emplace_back(parseBodyPart(dataView.withOffset(offset), bodyPart));
+      bodyParts.push_back(parseBodyPart(dataView.withOffset(offset), bodyPart));
     }
 
     textureDirectories = parseTextureDirectories(dataView, header);
