@@ -8,8 +8,14 @@
 #include <vector>
 
 namespace MdlParser {
+  /**
+   * Parses a .mdl file from a buffer into an easier to travers structure using STL containers.
+   */
   class Mdl {
   public:
+    /**
+     * A collection of primitives with a common set of vertices, indices and material.
+     */
     struct Mesh {
       /**
        * Column of the skin lookup table to use for this mesh.
@@ -31,7 +37,13 @@ namespace MdlParser {
       int32_t vertexCount;
     };
 
+    /**
+     * A logical grouping of meshes within the model as a whole.
+     */
     struct Model {
+      /**
+       * The meshes which make up this model
+       */
       std::vector<Mesh> meshes;
 
       /**
@@ -59,12 +71,25 @@ namespace MdlParser {
        * Human readable name for this body part.
        */
       std::string name;
+
+      /**
+       * The models which can be toggled between.
+       */
       std::vector<Model> models;
     };
 
+    /**
+     * A bone forming part of the model's skeleton.
+     */
     struct Bone {
+      /**
+       * The human readable name of this bone.
+       */
       std::string name;
 
+      /**
+       * Index of this bone's parent.
+       */
       int32_t parent;
 
       Structs::Vector position;
@@ -78,9 +103,15 @@ namespace MdlParser {
        */
       Structs::Matrix3x4 poseToBone;
 
+      /**
+       * Bitflags describing this bone. An enum is not currently provided with the possible values and their meanings.
+       */
       int32_t flags;
     };
 
+    /**
+     * A reference to a VTF file used by the model.
+     */
     struct Texture {
       /**
        * The filename of the VTF file only.
@@ -108,6 +139,10 @@ namespace MdlParser {
      */
     [[nodiscard]] int32_t getChecksum() const;
 
+    /**
+     * Gets the list of body parts (body groups) that make up the model.
+     * @return List of body parts.
+     */
     [[nodiscard]] const std::vector<BodyPart>& getBodyParts() const;
 
     /**
@@ -115,7 +150,7 @@ namespace MdlParser {
      * As each texture only includes its filename, you must search through this list of directories to find
      * the actual path to the image asset.
      *
-     * @return List of paths relative to /materials
+     * @return List of paths relative to /materials.
      */
     [[nodiscard]] const std::vector<std::string>& getTextureDirectories() const;
     [[nodiscard]] const std::vector<Texture>& getTextures() const;
@@ -126,10 +161,16 @@ namespace MdlParser {
      * @code
      * mdl.getSkinLookupTable()[skinFamily][mesh.material]
      * @endcode
-     * @return Skin lookup table as a 2D array
+     * @return Skin lookup table as a 2D array.
      */
     [[nodiscard]] const std::vector<std::vector<int16_t>>& getSkinLookupTable() const;
 
+    /**
+     * Gets the list of bones in the model.
+     * @remarks Models which you wouldn't expect to be rigged may still have a root bone,
+     * and that bone may be rotated relative to the model's overall origin (usually 90 degrees around the z axis).
+     * @return List of bones.
+     */
     [[nodiscard]] const std::vector<Bone>& getBones() const;
 
   private:
