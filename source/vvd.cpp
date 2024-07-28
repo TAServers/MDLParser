@@ -35,8 +35,6 @@ namespace MdlParser {
       throw InvalidBody("Size of VVD with given number of vertices exceeds data size");
     }
 
-    numLods = header.numLoDs;
-
     if (header.numFixups == 0) {
       vertices = dataView.parseStructArrayWithoutOffsets<Vertex>(
         header.vertexDataOffset, numVertices, "Failed to parse VVD vertices"
@@ -91,7 +89,7 @@ namespace MdlParser {
     return tangents;
   }
 
-  int32_t Vvd::getNumLods() const {
-    return numLods;
+  int32_t Vvd::getLevelsOfDetail() const {
+    return header.numLoDs;
   }
 }
