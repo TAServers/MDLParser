@@ -4,6 +4,10 @@
 #include "vtx.hpp"
 #include "vvd.hpp"
 #include <functional>
+
+/**
+ * A collection of helper functions to ease traversing the MDL, VTX and VVD structures together.
+ */
 namespace MdlParser::Accessors {
   /**
    * Iterates over the pairs of body parts in the MDL and VTX data, calling iteratee with each pair.
