@@ -1,0 +1,34 @@
+name: Doxygen
+run-name: "Build and deploy documentation"
+on:
+  push:
+
+jobs:
+  build:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build documentation
+      run: doxygen
+
+    - name: Upload artefact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/html
+
+  deploy:
+    needs: site
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        id: deployment
