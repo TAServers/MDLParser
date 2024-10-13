@@ -4,7 +4,7 @@ Simple and modern library for parsing the Valve model format.
 
 Documentation: https://taservers.github.io/MDLParser/
 
-See also: https://github.com/Derpius/BSPParser and https://github.com/Derpius/VTFParser.
+See also: https://github.com/TAServers/BSPParser and https://github.com/TAServers/VTFParser.
 
 ## What's included
 
@@ -30,7 +30,7 @@ const auto vtxData = ...;
 const auto vvdData = ...;
 
 // Parse the data (you should wrap this in a try/catch)
-const MdlParser::Mdl mdl(mdlFileData);
+const MdlParser::Mdl mdl(mdlData);
 const MdlParser::Vtx vtx(vtxData, mdl.getChecksum());
 const MdlParser::Vvd vvd(vvdData, mdl.getChecksum());
 
