@@ -16,7 +16,7 @@ namespace MdlParser {
 
     for (size_t i = absoluteOffset; i < lockedData->size(); i++) {
       if (lockedData->at(i) == std::byte(0)) {
-        return reinterpret_cast<const char*>(&lockedData->at(offset));
+        return reinterpret_cast<const char*>(&lockedData->at(absoluteOffset));
       }
     }
 

@@ -105,6 +105,14 @@ namespace MdlParser {
            )) {
         bones.push_back({
           .name = data.withOffset(offset).parseString(bone.szNameIndex, "Failed to parse MDL bone name"),
+          .parent = bone.parent,
+          .position = bone.pos,
+          .orientation = bone.quat,
+          .orientationEuler = bone.rot,
+          .positionScale = bone.posScale,
+          .orientationScale = bone.rotScale,
+          .poseToBone = bone.poseToBone,
+          .flags = bone.flags,
         });
       }
 
