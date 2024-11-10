@@ -23,6 +23,8 @@ add_library(MDLParser
         source/mdl.hpp
         source/accessors.hpp
         source/accessors.cpp
+        source/helpers/normalise-directory.hpp
+        source/helpers/normalise-directory.cpp
 )
 
 target_include_directories(
