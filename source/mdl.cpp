@@ -1,4 +1,5 @@
 #include "mdl.hpp"
+#include "helpers/normalise-directory.hpp"
 #include "helpers/offset-data-view.hpp"
 #include "structs/vvd.hpp"
 
@@ -58,7 +59,8 @@ namespace MdlParser {
       for (const auto textureDirectoryOffset : data.parseStructArrayWithoutOffsets<int32_t>(
              header.textureDirOffset, header.textureDirCount, "Failed to parse MDL texture directory list"
            )) {
-        textureDirectories.push_back(data.parseString(textureDirectoryOffset, "Failed to parse MDL texture directory"));
+        const auto rawDirectory = data.parseString(textureDirectoryOffset, "Failed to parse MDL texture directory");
+        textureDirectories.push_back(getNormalisedDirectory(rawDirectory));
       }
 
       return std::move(textureDirectories);
