@@ -8,7 +8,7 @@ namespace MdlParser {
   using Structs::Mdl::Header2;
 
   namespace {
-    constexpr int32_t FILE_ID = u'I' + (u'D' << 8u) + (u'S' << 16u) + (u'T' << 24u);
+    constexpr auto FILE_ID = u'I' + (u'D' << 8u) + (u'S' << 16u) + (u'T' << 24u);
 
     Mdl::Mesh parseMesh(const Structs::Mdl::Mesh& mesh) {
       return {
@@ -23,7 +23,9 @@ namespace MdlParser {
       meshes.reserve(model.meshesCount);
 
       for (const auto& mesh : data.parseStructArrayWithoutOffsets<Structs::Mdl::Mesh>(
-             model.meshesOffset, model.meshesCount, "Failed to parse MDL mesh array"
+             model.meshesOffset,
+             model.meshesCount,
+             "Failed to parse MDL mesh array"
            )) {
         meshes.push_back(parseMesh(mesh));
       }
@@ -41,7 +43,9 @@ namespace MdlParser {
       models.reserve(bodyPart.modelsCount);
 
       for (const auto& [model, offset] : data.parseStructArray<Structs::Mdl::Model>(
-             bodyPart.modelsOffset, bodyPart.modelsCount, "Failed to parse MDL model array"
+             bodyPart.modelsOffset,
+             bodyPart.modelsCount,
+             "Failed to parse MDL model array"
            )) {
         models.push_back(parseModel(data.withOffset(offset), model));
       }
@@ -52,12 +56,14 @@ namespace MdlParser {
       };
     }
 
-    std::vector<std::string> parseTextureDirectories(const OffsetDataView& data, const Structs::Mdl::Header& header) {
+    std::vector<std::string> parseTextureDirectories(const OffsetDataView& data, const Header& header) {
       std::vector<std::string> textureDirectories;
       textureDirectories.reserve(header.textureDirCount);
 
       for (const auto textureDirectoryOffset : data.parseStructArrayWithoutOffsets<int32_t>(
-             header.textureDirOffset, header.textureDirCount, "Failed to parse MDL texture directory list"
+             header.textureDirOffset,
+             header.textureDirCount,
+             "Failed to parse MDL texture directory list"
            )) {
         const auto rawDirectory = data.parseString(textureDirectoryOffset, "Failed to parse MDL texture directory");
         textureDirectories.push_back(getNormalisedDirectory(rawDirectory));
@@ -66,71 +72,81 @@ namespace MdlParser {
       return std::move(textureDirectories);
     }
 
-    std::vector<Mdl::Texture> parseTextures(const OffsetDataView& data, const Structs::Mdl::Header& header) {
+    std::vector<Mdl::Texture> parseTextures(const OffsetDataView& data, const Header& header) {
       std::vector<Mdl::Texture> textures;
       textures.reserve(header.textureCount);
 
       for (const auto& [texture, offset] : data.parseStructArray<Structs::Mdl::Texture>(
-             header.textureOffset, header.textureCount, "Failed to parse MDL texture array"
+             header.textureOffset,
+             header.textureCount,
+             "Failed to parse MDL texture array"
            )) {
-        textures.push_back({
-          .name = data.withOffset(offset).parseString(texture.szNameIndex, "Failed to parse MDL texture name"),
-          .flags = texture.flags,
-        });
+        textures.push_back(
+          {
+            .name = data.withOffset(offset).parseString(texture.szNameIndex, "Failed to parse MDL texture name"),
+            .flags = texture.flags,
+          }
+        );
       }
 
       return std::move(textures);
     }
 
-    std::vector<std::vector<int16_t>> parseSkinTable(const OffsetDataView& data, const Structs::Mdl::Header& header) {
+    std::vector<std::vector<int16_t>> parseSkinTable(const OffsetDataView& data, const Header& header) {
       std::vector<std::vector<int16_t>> skins;
       skins.reserve(header.skinFamilyCount);
 
       for (size_t family = 0; family < header.skinFamilyCount; family++) {
         skins.push_back(
           data.withOffset(header.skinRefOffset)
-            .parseStructArrayWithoutOffsets<int16_t>(
-              family * header.skinRefCount * sizeof(int16_t), header.skinRefCount, "Failed to parse MDL skin table row"
-            )
+          .parseStructArrayWithoutOffsets<int16_t>(
+            family * header.skinRefCount * sizeof(int16_t),
+            header.skinRefCount,
+            "Failed to parse MDL skin table row"
+          )
         );
       }
 
       return std::move(skins);
     }
 
-    std::vector<Mdl::Bone> parseBones(const OffsetDataView& data, const Structs::Mdl::Header& header) {
+    std::vector<Mdl::Bone> parseBones(const OffsetDataView& data, const Header& header) {
       std::vector<Mdl::Bone> bones;
       bones.reserve(header.boneCount);
 
       for (const auto& [bone, offset] : data.parseStructArray<Structs::Mdl::Bone>(
-             header.boneOffset, header.boneCount, "Failed to parse MDL bone array"
+             header.boneOffset,
+             header.boneCount,
+             "Failed to parse MDL bone array"
            )) {
-        bones.push_back({
-          .name = data.withOffset(offset).parseString(bone.szNameIndex, "Failed to parse MDL bone name"),
-          .parent = bone.parent,
-          .position = bone.pos,
-          .orientation = bone.quat,
-          .orientationEuler = bone.rot,
-          .positionScale = bone.posScale,
-          .orientationScale = bone.rotScale,
-          .poseToBone = bone.poseToBone,
-          .flags = bone.flags,
-        });
+        bones.push_back(
+          {
+            .name = data.withOffset(offset).parseString(bone.szNameIndex, "Failed to parse MDL bone name"),
+            .parent = bone.parent,
+            .position = bone.pos,
+            .orientation = bone.quat,
+            .orientationEuler = bone.rot,
+            .positionScale = bone.posScale,
+            .orientationScale = bone.rotScale,
+            .poseToBone = bone.poseToBone,
+            .flags = bone.flags,
+          }
+        );
       }
 
       return std::move(bones);
     }
   }
 
-  Mdl::Mdl(const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum) {
+  Mdl::Mdl(const std::span<const std::byte> data, const std::optional<int32_t>& checksum) {
     const OffsetDataView dataView(data);
     header = dataView.parseStruct<Header>(0, "Failed to parse MDL header").first;
 
     if (header.id != FILE_ID) {
-      throw Errors::InvalidHeader("MDL header file ID does not match packed IDST");
+      throw InvalidHeader("MDL header file ID does not match packed IDST");
     }
     if (header.version > Header::MAX_SUPPORTED_VERSION) {
-      throw Errors::InvalidHeader("MDL version is unsupported (greater than 48)");
+      throw InvalidHeader("MDL version is unsupported (greater than 48)");
     }
     if (checksum.has_value() && header.checksum != checksum.value()) {
       throw InvalidChecksum("MDL checksum does not match");
@@ -142,7 +158,9 @@ namespace MdlParser {
 
     bodyParts.reserve(header.bodypartCount);
     for (const auto& [bodyPart, offset] : dataView.parseStructArray<Structs::Mdl::BodyPart>(
-           header.bodypartOffset, header.bodypartCount, "Failed to parse MDL body part array"
+           header.bodypartOffset,
+           header.bodypartCount,
+           "Failed to parse MDL body part array"
          )) {
       bodyParts.push_back(parseBodyPart(dataView.withOffset(offset), bodyPart));
     }

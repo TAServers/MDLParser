@@ -1,9 +1,9 @@
 #include "vtx.hpp"
-#include "errors.hpp"
-#include "helpers/offset-data-view.hpp"
 #include "structs/vtx.hpp"
 #include <cstdint>
 #include <optional>
+#include "errors.hpp"
+#include "helpers/offset-data-view.hpp"
 
 namespace MdlParser {
   using Structs::Vtx::Header;
@@ -25,10 +25,15 @@ namespace MdlParser {
       strips.reserve(stripGroup.numStrips);
 
       for (const auto& [strip, _] : data.parseStructArray<Structs::Vtx::Strip>(
-             stripGroup.stripOffset, stripGroup.numStrips, "Failed to parse VTX strip array"
+             stripGroup.stripOffset,
+             stripGroup.numStrips,
+             "Failed to parse VTX strip array"
            )) {
         checkBounds(
-          strip.vertOffset, strip.numVerts, stripGroup.numVerts, "VTX strip accesses outside strip group vertex data"
+          strip.vertOffset,
+          strip.numVerts,
+          stripGroup.numVerts,
+          "VTX strip accesses outside strip group vertex data"
         );
         checkBounds(
           strip.indexOffset,
@@ -42,10 +47,14 @@ namespace MdlParser {
 
       return {
         .vertices = data.parseStructArrayWithoutOffsets<Structs::Vtx::Vertex>(
-          stripGroup.vertOffset, stripGroup.numVerts, "Failed to parse VTX vertex array"
+          stripGroup.vertOffset,
+          stripGroup.numVerts,
+          "Failed to parse VTX vertex array"
         ),
         .indices = data.parseStructArrayWithoutOffsets<uint16_t>(
-          stripGroup.indexOffset, stripGroup.numIndices, "Failed to parse VTX index array"
+          stripGroup.indexOffset,
+          stripGroup.numIndices,
+          "Failed to parse VTX index array"
         ),
         .strips = std::move(strips),
         .flags = stripGroup.flags,
@@ -57,12 +66,14 @@ namespace MdlParser {
       stripGroups.reserve(mesh.numStripGroups);
 
       for (const auto& [stripGroup, offset] : data.parseStructArray<Structs::Vtx::StripGroup>(
-             mesh.stripGroupHeaderOffset, mesh.numStripGroups, "Failed to parse VTX strip group array"
+             mesh.stripGroupHeaderOffset,
+             mesh.numStripGroups,
+             "Failed to parse VTX strip group array"
            )) {
         stripGroups.push_back(parseStripGroup(data.withOffset(offset), stripGroup));
       }
 
-      return {.stripGroups = stripGroups, .flags = mesh.flags};
+      return { .stripGroups = stripGroups, .flags = mesh.flags };
     }
 
     Vtx::ModelLod parseModelLod(const OffsetDataView& data, const Structs::Vtx::ModelLoD& lod) {
@@ -74,7 +85,7 @@ namespace MdlParser {
         meshes.push_back(parseMesh(data.withOffset(offset), mesh));
       }
 
-      return {.meshes = std::move(meshes), .switchPoint = lod.switchPoint};
+      return { .meshes = std::move(meshes), .switchPoint = lod.switchPoint };
     }
 
     Vtx::Model parseModel(const OffsetDataView& data, const Structs::Vtx::Model& model) {
@@ -82,22 +93,28 @@ namespace MdlParser {
       lods.reserve(model.numLoDs);
 
       for (const auto& [lod, offset] : data.parseStructArray<Structs::Vtx::ModelLoD>(
-             model.lodOffset, model.numLoDs, "Failed to parse VTX model LoD array"
+             model.lodOffset,
+             model.numLoDs,
+             "Failed to parse VTX model LoD array"
            )) {
         lods.push_back(parseModelLod(data.withOffset(offset), lod));
       }
 
-      return {.levelOfDetails = std::move(lods)};
+      return { .levelOfDetails = std::move(lods) };
     }
 
     Vtx::BodyPart parseBodyPart(
-      const OffsetDataView& data, const Structs::Vtx::BodyPart& bodyPart, int32_t expectedLods
+      const OffsetDataView& data,
+      const Structs::Vtx::BodyPart& bodyPart,
+      const int32_t expectedLods
     ) {
       std::vector<Vtx::Model> models;
       models.reserve(bodyPart.numModels);
 
       for (const auto& [model, offset] : data.parseStructArray<Structs::Vtx::Model>(
-             bodyPart.modelOffset, bodyPart.numModels, "Failed to parse VTX model array"
+             bodyPart.modelOffset,
+             bodyPart.numModels,
+             "Failed to parse VTX model array"
            )) {
         if (model.numLoDs != expectedLods) {
           throw InvalidBody("VTX model LoD count does not match header");
@@ -106,11 +123,11 @@ namespace MdlParser {
         models.push_back(parseModel(data.withOffset(offset), model));
       }
 
-      return {.models = std::move(models)};
+      return { .models = std::move(models) };
     }
   }
 
-  Vtx::Vtx(const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum) {
+  Vtx::Vtx(const std::span<const std::byte> data, const std::optional<int32_t>& checksum) {
     const OffsetDataView dataView(data);
     header = dataView.parseStruct<Header>(0, "Failed to parse VTX header").first;
 
@@ -123,7 +140,9 @@ namespace MdlParser {
 
     bodyParts.reserve(header.numBodyParts);
     for (const auto& [bodyPart, offset] : dataView.parseStructArray<Structs::Vtx::BodyPart>(
-           header.bodyPartOffset, header.numBodyParts, "Failed to parse VTX body part array"
+           header.bodyPartOffset,
+           header.numBodyParts,
+           "Failed to parse VTX body part array"
          )) {
       bodyParts.push_back(parseBodyPart(dataView.withOffset(offset), bodyPart, header.numLoDs));
     }
@@ -131,28 +150,33 @@ namespace MdlParser {
     materialReplacementsByLod.reserve(header.numLoDs);
     for (const auto& [replacementList, replacementListOffset] :
          dataView.parseStructArray<Structs::Vtx::MaterialReplacementList>(
-           header.materialReplacementListOffset, header.numLoDs, "Failed to parse VTX material replacement lists"
+           header.materialReplacementListOffset,
+           header.numLoDs,
+           "Failed to parse VTX material replacement lists"
          )) {
-      std::vector<Vtx::MaterialReplacement> replacements;
+      std::vector<MaterialReplacement> replacements;
       replacements.reserve(replacementList.replacementCount);
 
       for (const auto& [replacement, replacementOffset] : dataView.withOffset(replacementListOffset)
-                                                            .parseStructArray<Structs::Vtx::MaterialReplacement>(
-                                                              replacementList.replacementOffset,
-                                                              replacementList.replacementCount,
-                                                              "Failed to parse VTX material replacements"
-                                                            )) {
-        replacements.push_back({
-          .replacementId = replacement.materialId,
-          .replacementName =
+           .parseStructArray<Structs::Vtx::MaterialReplacement>(
+             replacementList.replacementOffset,
+             replacementList.replacementCount,
+             "Failed to parse VTX material replacements"
+           )) {
+        replacements.push_back(
+          {
+            .replacementId = replacement.materialId,
+            .replacementName =
             dataView.withOffset(replacementOffset)
-              .parseString(replacement.replacementMaterialNameOffset, "Failed to parse VTX material replacement name"),
-        });
+            .parseString(replacement.replacementMaterialNameOffset, "Failed to parse VTX material replacement name"),
+          }
+        );
       }
 
       materialReplacementsByLod.push_back(std::move(replacements));
     }
   }
+
   int32_t Vtx::getChecksum() const {
     return header.checksum;
   }
