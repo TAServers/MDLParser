@@ -1,9 +1,9 @@
 #pragma once
 
-#include "structs/vvd.hpp"
-#include <memory>
 #include <optional>
+#include <span>
 #include <vector>
+#include "structs/vvd.hpp"
 
 namespace MdlParser {
   /**
@@ -19,7 +19,8 @@ namespace MdlParser {
      * @param checksum Optional checksum to validate against the header's.
      */
     explicit Vvd(
-      const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum = std::nullopt
+      std::span<const std::byte> data,
+      const std::optional<int32_t>& checksum = std::nullopt
     );
 
     /**

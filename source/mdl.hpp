@@ -1,11 +1,10 @@
 #pragma once
 
-#include "./structs/mdl.hpp"
-#include <cstdint>
-#include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
+#include "./structs/mdl.hpp"
 
 namespace MdlParser {
   /**
@@ -123,13 +122,14 @@ namespace MdlParser {
 
     /**
      * Parses a .mdl file contained in the given buffer into an easier to use and more modern structure.
-     * No ownership of the data is taken as all contents are copied into new structs.
+     * No ownership of the data is taken but all contents are copied into new structs, so the Mdl instance may outlive data.
      *
      * @param data
      * @param checksum Optional checksum to validate against the header's
      */
     explicit Mdl(
-      const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum = std::nullopt
+      std::span<const std::byte> data,
+      const std::optional<int32_t>& checksum = std::nullopt
     );
 
     /**

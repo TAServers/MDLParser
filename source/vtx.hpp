@@ -1,11 +1,11 @@
 #pragma once
 
-#include "enums.hpp"
-#include "structs/vtx.hpp"
-#include <memory>
 #include <optional>
+#include <span>
 #include <string>
 #include <vector>
+#include "enums.hpp"
+#include "structs/vtx.hpp"
 
 namespace MdlParser {
   /**
@@ -126,13 +126,14 @@ namespace MdlParser {
 
     /**
      * Parses a .vtx file contained in the given buffer into an easier to use and more modern structure.
-     * No ownership of the data is taken as all contents are copied into new structs.
+     * No ownership of the data is taken but all contents are copied into new structs, so the Vtx can safely outlive data.
      *
      * @param data
      * @param checksum Optional checksum to validate against the header's
      */
     explicit Vtx(
-      const std::weak_ptr<std::vector<std::byte>>& data, const std::optional<int32_t>& checksum = std::nullopt
+      std::span<const std::byte> data,
+      const std::optional<int32_t>& checksum = std::nullopt
     );
 
     /**
