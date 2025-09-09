@@ -1,3 +1,8 @@
+>[!WARNING]
+>All Source Engine file format parsers have been merged into a single monorepo: https://github.com/TAServers/source-parsers.
+>
+>Updates will only be made to this new repository, while the individual repositories (such as this one) will remain archived to avoid breaking existing projects.
+
 # MDLParser
 
 Simple and modern library for parsing the Valve model format.
